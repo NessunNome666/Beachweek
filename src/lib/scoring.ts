@@ -1,3 +1,13 @@
+// Punti classifica per partita: 2-0 → [3,0], 2-1 → [2,1]
+export function calculateStandingPoints(scoreHome: number, scoreAway: number): [number, number] {
+  if (scoreHome === 2 && scoreAway === 0) return [3, 0]
+  if (scoreHome === 2 && scoreAway === 1) return [2, 1]
+  if (scoreHome === 0 && scoreAway === 2) return [0, 3]
+  if (scoreHome === 1 && scoreAway === 2) return [1, 2]
+  return [0, 0]
+}
+
+// Punti fanta per pronostico
 export function calculateMatchPoints(
   predictedHome: number,
   predictedAway: number,
