@@ -16,11 +16,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur border-b border-slate-800">
+    <header className="sticky top-0 z-50 bg-[#0d0520]/85 backdrop-blur border-b border-orange-900/40">
       <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-white hover:text-amber-400 transition-colors">
-          <Trophy size={22} className="text-amber-400" />
-          Torneo Volley 2026
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-white hover:text-orange-400 transition-colors">
+          <Trophy size={22} className="text-orange-400" />
+          Tito Beach Week 2026
         </Link>
 
         {/* Desktop links */}
@@ -29,8 +29,8 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className={`text-sm font-medium transition-colors hover:text-amber-400 ${
-                pathname.startsWith(href) ? 'text-amber-400' : 'text-slate-300'
+              className={`text-sm font-medium transition-colors hover:text-orange-400 ${
+                pathname.startsWith(href) ? 'text-orange-400' : 'text-slate-300'
               }`}
             >
               {label}
@@ -38,7 +38,7 @@ export default function Navbar() {
           ))}
           <Link
             href="/fantacompetizione/pronostici"
-            className="flex items-center gap-1.5 bg-amber-400 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full hover:bg-amber-300 transition-colors"
+            className="flex items-center gap-1.5 bg-orange-500 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full hover:bg-orange-400 transition-colors"
           >
             <Star size={14} />
             I miei pronostici
@@ -63,8 +63,8 @@ export default function Navbar() {
               key={href}
               href={href}
               onClick={() => setOpen(false)}
-              className={`text-sm font-medium py-2 transition-colors hover:text-amber-400 ${
-                pathname.startsWith(href) ? 'text-amber-400' : 'text-slate-300'
+              className={`text-sm font-medium py-2 transition-colors hover:text-orange-400 ${
+                pathname.startsWith(href) ? 'text-orange-400' : 'text-slate-300'
               }`}
             >
               {label}
@@ -73,7 +73,7 @@ export default function Navbar() {
           <Link
             href="/fantacompetizione/pronostici"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-center gap-1.5 bg-amber-400 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full hover:bg-amber-300 transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-orange-500 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full hover:bg-orange-400 transition-colors"
           >
             <Star size={14} />
             I miei pronostici

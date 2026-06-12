@@ -6,18 +6,18 @@ import Navbar from '@/components/Navbar'
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
 export const metadata: Metadata = {
-  title: 'Torneo Volley 2026',
-  description: 'Segui i risultati e gioca alla fantacompetizione del Torneo Volley 2026',
+  title: 'Tito Beach Week 2026',
+  description: 'Segui i risultati e gioca alla fantacompetizione della Tito Beach Week 2026',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it" className={`${geist.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-slate-950 text-white antialiased">
+      <body className="min-h-full flex flex-col text-white antialiased">
         <Navbar />
         <main className="flex-1">{children}</main>
-        <footer className="text-center text-xs text-slate-500 py-6 border-t border-slate-800">
-          © 2026 Phœbus Tito Volley — Torneo estivo
+        <footer className="text-center text-xs text-slate-500 py-6 border-t border-orange-900/30">
+          © 2026 Phœbus Tito Volley — Tito Beach Week
         </footer>
       </body>
     </html>

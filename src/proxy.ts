@@ -31,8 +31,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  if (path.startsWith('/admin') && !user) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+  if (path.startsWith('/admin')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/auth/login', request.url))
+    }
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.is_admin) {
+      return NextResponse.redirect(new URL('/auth/unauthorized', request.url))
+    }
   }
 
   return supabaseResponse
