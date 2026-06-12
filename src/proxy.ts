@@ -40,7 +40,7 @@ export async function proxy(request: NextRequest) {
       .from('users')
       .select('is_admin')
       .eq('id', user.id)
-      .single()
+      .single() as unknown as { data: { is_admin: boolean } | null }
 
     if (!profile?.is_admin) {
       return NextResponse.redirect(new URL('/auth/unauthorized', request.url))

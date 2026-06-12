@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .from('users')
     .select('is_admin')
     .eq('id', user.id)
-    .single()
+    .single() as unknown as { data: { is_admin: boolean } | null }
 
   if (!profile?.is_admin) redirect('/auth/unauthorized')
 
