@@ -27,6 +27,8 @@ export function formatScore(home: number | null, away: number | null): string {
 }
 
 export const WINNER_POINTS = 5
+export const SECOND_PLACE_POINTS = 5
+export const THIRD_PLACE_POINTS = 5
 export const EXACT_SCORE_POINTS = 3
 export const CORRECT_WINNER_POINTS = 1
 
