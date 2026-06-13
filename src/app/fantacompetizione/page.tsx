@@ -6,7 +6,7 @@ export default function FantaLandingPage() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="text-center mb-12">
         <Star size={56} className="text-amber-400 mx-auto mb-4" />
-        <h1 className="text-4xl font-extrabold mb-4">Fantacompetizione</h1>
+        <h1 className="text-4xl font-extrabold mb-4">Fanta</h1>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto">
           Metti alla prova le tue previsioni. Pronostica i risultati delle partite e i vincitori dei tornei per scalare la classifica.
         </p>

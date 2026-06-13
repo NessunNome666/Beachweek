@@ -105,7 +105,7 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 pb-20">
         <div className="bg-gradient-to-r from-orange-900/20 via-fuchsia-900/20 to-purple-900/20 border border-orange-700/30 rounded-2xl p-8 text-center">
           <Star size={40} className="text-orange-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">Gioca alla Fantacompetizione</h2>
+          <h2 className="text-2xl font-bold mb-3">Gioca alla Fanta</h2>
           <p className="text-slate-400 max-w-lg mx-auto mb-6">
             Pronostica i risultati delle partite e i vincitori dei tornei. Accumula punti e scala la classifica. Il primo classificato verrà premiato!
           </p>

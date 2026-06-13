@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Trophy, Star, Menu, X, LogIn, LogOut, User } from 'lucide-react'
+import { Trophy, Star, Menu, X, LogIn, LogOut, User, ShieldAlert } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const links = [
   { href: '/tornei', label: 'Tornei' },
-  { href: '/fantacompetizione', label: 'Fantacompetizione' },
+  { href: '/fantacompetizione', label: 'Fanta' },
   { href: '/fantacompetizione/classifica', label: 'Classifica Fanta' },
 ]
 
@@ -17,24 +17,29 @@ export default function Navbar() {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [displayName, setDisplayName] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
+
+    async function loadUser(userId: string, meta: Record<string, string>) {
+      setDisplayName(meta?.display_name ?? meta?.email?.split('@')[0] ?? null)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any).from('users').select('is_admin').eq('id', userId).single()
+      setIsAdmin(data?.is_admin ?? false)
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setDisplayName(
-          session.user.user_metadata?.display_name ??
-          session.user.email?.split('@')[0] ??
-          null
-        )
-      }
+      if (session?.user) loadUser(session.user.id, session.user.user_metadata as Record<string, string>)
     })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setDisplayName(
-        session?.user?.user_metadata?.display_name ??
-        session?.user?.email?.split('@')[0] ??
-        null
-      )
+      if (session?.user) {
+        loadUser(session.user.id, session.user.user_metadata as Record<string, string>)
+      } else {
+        setDisplayName(null)
+        setIsAdmin(false)
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -80,6 +85,15 @@ export default function Navbar() {
                 <Star size={14} />
                 I miei pronostici
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin/partite"
+                  className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                >
+                  <ShieldAlert size={14} />
+                  Admin
+                </Link>
+              )}
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <User size={14} />
                 <span className="max-w-[120px] truncate">{displayName}</span>
@@ -115,13 +129,13 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-slate-800 bg-slate-900 px-4 pb-4 flex flex-col gap-1">
+        <div className="md:hidden border-t border-slate-800 bg-slate-900 px-4 pb-4 flex flex-col">
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               onClick={() => setOpen(false)}
-              className={`text-sm font-medium py-3 transition-colors hover:text-orange-400 ${
+              className={`text-sm font-medium py-3 border-b border-slate-800/50 transition-colors hover:text-orange-400 ${
                 pathname.startsWith(href) ? 'text-orange-400' : 'text-slate-300'
               }`}
             >
@@ -134,30 +148,38 @@ export default function Navbar() {
               <Link
                 href="/fantacompetizione/pronostici"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-1.5 bg-orange-500 text-slate-900 text-sm font-semibold px-4 py-3 rounded-full hover:bg-orange-400 transition-colors mt-2"
+                className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-orange-400 hover:text-orange-300 transition-colors"
               >
                 <Star size={14} />
                 I miei pronostici
               </Link>
-              <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-800">
-                <div className="flex items-center gap-2 text-slate-400 text-sm">
-                  <User size={14} />
-                  <span className="truncate max-w-[160px]">{displayName}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-1 text-slate-400 hover:text-red-400 text-sm transition-colors py-2"
+              {isAdmin && (
+                <Link
+                  href="/admin/partite"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-red-400 hover:text-red-300 transition-colors"
                 >
-                  <LogOut size={14} />
-                  Esci
-                </button>
+                  <ShieldAlert size={14} />
+                  Admin
+                </Link>
+              )}
+              <div className="flex items-center gap-2 text-sm text-slate-500 py-3 border-b border-slate-800/50">
+                <User size={14} />
+                <span className="truncate max-w-[200px]">{displayName}</span>
               </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-sm font-medium py-3 text-slate-300 hover:text-red-400 transition-colors text-left"
+              >
+                <LogOut size={14} />
+                Esci
+              </button>
             </>
           ) : (
             <Link
               href="/auth/login"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1.5 text-sm font-medium py-3 text-slate-300 hover:text-orange-400 transition-colors mt-1 border-t border-slate-800 pt-3"
+              className="flex items-center gap-2 text-sm font-medium py-3 text-slate-300 hover:text-orange-400 transition-colors"
             >
               <LogIn size={14} />
               Accedi

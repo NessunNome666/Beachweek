@@ -10,7 +10,7 @@ export default function FantaClassificaPage() {
     <div className="max-w-2xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-3">
         <Trophy className="text-amber-400" size={32} />
-        Classifica Fantacompetizione
+        Classifica Fanta
       </h1>
       <p className="text-slate-400 mb-10">Aggiornata in tempo reale dopo ogni partita.</p>
 
