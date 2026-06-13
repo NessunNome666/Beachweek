@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Mail, Loader2, CheckCircle } from 'lucide-react'
 
-export default function LoginForm() {
+export default function LoginForm({ next }: { next?: string }) {
   const [email, setEmail] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,10 +17,13 @@ export default function LoginForm() {
     setLoading(true)
     setError('')
     const supabase = createClient()
+    const callbackUrl = next
+      ? `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+      : `${location.origin}/auth/callback`
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: callbackUrl,
         data: { display_name: displayName || email.split('@')[0] },
       },
     })

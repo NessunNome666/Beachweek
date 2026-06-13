@@ -65,7 +65,7 @@ export default function WinnerPredictionForm({ tournamentId, teams, initialTeamI
       <button
         onClick={handleSave}
         disabled={!selectedTeamId || loading}
-        className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-colors ${
+        className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-colors ${
           saved
             ? 'bg-green-500/20 text-green-400'
             : 'bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white'

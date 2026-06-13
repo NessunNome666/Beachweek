@@ -28,12 +28,12 @@ export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   if (path.startsWith('/fantacompetizione/pronostici') && !user) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+    return NextResponse.redirect(new URL(`/auth/login?next=${encodeURIComponent(path)}`, request.url))
   }
 
   if (path.startsWith('/admin')) {
     if (!user) {
-      return NextResponse.redirect(new URL('/auth/login', request.url))
+      return NextResponse.redirect(new URL(`/auth/login?next=${encodeURIComponent(path)}`, request.url))
     }
 
     const { data: profile } = await supabase

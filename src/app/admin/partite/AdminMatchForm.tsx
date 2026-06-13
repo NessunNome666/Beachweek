@@ -71,14 +71,14 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
         <span className="font-semibold flex-1 truncate text-right">{awayTeamName}</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-3">
         {VALID_VOLLEYBALL_SCORES.map(([h, a]) => {
           const key = `${h}-${a}`
           return (
             <button
               key={key}
               onClick={() => { setSelected(key); setSaved(false); setError('') }}
-              className={`py-2 rounded-lg text-sm font-mono font-bold transition-colors ${
+              className={`py-3 rounded-lg text-sm font-mono font-bold transition-colors ${
                 selected === key
                   ? 'bg-amber-400 text-slate-900'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'

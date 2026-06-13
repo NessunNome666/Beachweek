@@ -53,14 +53,14 @@ export default function PredictionForm({ matchId, homeTeamName, awayTeamName, in
         <span className="flex-1 truncate text-right">{awayTeamName}</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-4">
+      <div className="grid grid-cols-3 gap-2 mb-4">
         {VALID_VOLLEYBALL_SCORES.map(([h, a]) => {
           const key = `${h}-${a}`
           return (
             <button
               key={key}
               onClick={() => { setSelected(key); setSaved(false); setError('') }}
-              className={`py-2 rounded-lg text-sm font-mono font-bold transition-colors ${
+              className={`py-3 rounded-lg text-sm font-mono font-bold transition-colors ${
                 selected === key
                   ? 'bg-amber-400 text-slate-900'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -81,7 +81,7 @@ export default function PredictionForm({ matchId, homeTeamName, awayTeamName, in
       <button
         onClick={handleSave}
         disabled={!selected || loading}
-        className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-colors ${
+        className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-colors ${
           saved
             ? 'bg-green-500/20 text-green-400'
             : 'bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white'
