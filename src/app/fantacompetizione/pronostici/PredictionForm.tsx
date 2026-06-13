@@ -1,24 +1,48 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, Loader2, AlertCircle } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { VALID_VOLLEYBALL_SCORES } from '@/lib/scoring'
 
 interface Props {
   matchId: string
   homeTeamName: string
   awayTeamName: string
+  initialPrediction?: string
 }
 
-export default function PredictionForm({ matchId, homeTeamName, awayTeamName }: Props) {
-  const [selected, setSelected] = useState<string>('')
-  const [saved, setSaved] = useState(false)
+export default function PredictionForm({ matchId, homeTeamName, awayTeamName, initialPrediction }: Props) {
+  const [selected, setSelected] = useState(initialPrediction ?? '')
+  const [loading, setLoading] = useState(false)
+  const [saved, setSaved] = useState(!!initialPrediction)
+  const [error, setError] = useState('')
 
-  function handleSave() {
+  async function handleSave() {
     if (!selected) return
-    // TODO: save to Supabase when connected
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    setLoading(true)
+    setError('')
+
+    const [predictedHome, predictedAway] = selected.split('-').map(Number)
+    const supabase = createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setError('Non sei autenticato.'); setLoading(false); return }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: dbError } = await (supabase as any)
+      .from('predictions_match')
+      .upsert(
+        { user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway },
+        { onConflict: 'user_id,match_id' }
+      )
+
+    setLoading(false)
+    if (dbError) {
+      setError('Errore nel salvataggio. Riprova.')
+    } else {
+      setSaved(true)
+    }
   }
 
   return (
@@ -35,7 +59,7 @@ export default function PredictionForm({ matchId, homeTeamName, awayTeamName }: 
           return (
             <button
               key={key}
-              onClick={() => setSelected(key)}
+              onClick={() => { setSelected(key); setSaved(false); setError('') }}
               className={`py-2 rounded-lg text-sm font-mono font-bold transition-colors ${
                 selected === key
                   ? 'bg-amber-400 text-slate-900'
@@ -48,16 +72,28 @@ export default function PredictionForm({ matchId, homeTeamName, awayTeamName }: 
         })}
       </div>
 
+      {error && (
+        <p className="flex items-center gap-1.5 text-red-400 text-xs mb-2">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
+
       <button
         onClick={handleSave}
-        disabled={!selected}
+        disabled={!selected || loading}
         className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-colors ${
           saved
             ? 'bg-green-500/20 text-green-400'
             : 'bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white'
         }`}
       >
-        {saved ? <><Check size={14} /> Salvato!</> : 'Conferma pronostico'}
+        {loading ? (
+          <><Loader2 size={14} className="animate-spin" /> Salvataggio…</>
+        ) : saved ? (
+          <><Check size={14} /> Salvato!</>
+        ) : (
+          'Conferma pronostico'
+        )}
       </button>
     </div>
   )
