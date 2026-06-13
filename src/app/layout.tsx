@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: 'Tito Beach Week 2026',
   description: 'Segui i risultati e gioca alla fantacompetizione della Tito Beach Week 2026',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icon.png',
+  },
 }
 
 export const viewport: Viewport = {
