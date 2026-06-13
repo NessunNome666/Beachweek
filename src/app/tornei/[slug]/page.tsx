@@ -1,19 +1,12 @@
 import { notFound } from 'next/navigation'
 import { Trophy, Shuffle, CheckCircle2 } from 'lucide-react'
-import {
-  TOURNAMENTS, TEAMS_AMA, TEAMS_PRO, TEAMS_FV,
-  MATCHES_AMA, MATCHES_PRO, MATCHES_FV,
-  STANDINGS_AMA, STANDINGS_PRO, STANDINGS_FV,
-} from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/server'
 import {
   getQualifiedAmatoriale, getPairingsPro, getQualifiedFootVolley, sortGroup,
 } from '@/lib/qualification'
+import type { StandingRow } from '@/lib/qualification'
 import GironeTable from '@/components/GironeTable'
 import MatchCard from '@/components/MatchCard'
-
-const TEAMS_MAP = { ama: TEAMS_AMA, pro: TEAMS_PRO, fv: TEAMS_FV }
-const MATCHES_MAP = { ama: MATCHES_AMA, pro: MATCHES_PRO, fv: MATCHES_FV }
-const STANDINGS_MAP = { ama: STANDINGS_AMA, pro: STANDINGS_PRO, fv: STANDINGS_FV }
 
 const PHASE_ORDER = ['girone', 'quarti', 'semifinale', 'terzo_posto', 'finale']
 const PHASE_LABEL: Record<string, string> = {
@@ -23,19 +16,83 @@ const PHASE_LABEL: Record<string, string> = {
   finale: 'Finale',
 }
 
+const SLUG_TO_TID: Record<string, 'ama' | 'pro' | 'fv'> = {
+  'beach-volley-amatoriale': 'ama',
+  'beach-volley-pro': 'pro',
+  'foot-volley-2v2': 'fv',
+}
+
 export default async function TorneoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const torneo = TOURNAMENTS.find((t) => t.slug === slug)
+  const tid = SLUG_TO_TID[slug]
+  if (!tid) notFound()
+
+  const supabase = await createClient()
+
+  // Step 1: ottieni il torneo per slug
+  const { data: torneo } = await (supabase as any)
+    .from('tournaments')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+
   if (!torneo) notFound()
 
-  const tid = torneo.id as 'ama' | 'pro' | 'fv'
-  const teams = TEAMS_MAP[tid]
-  const matches = MATCHES_MAP[tid]
-  const standings = STANDINGS_MAP[tid]
+  // Step 2: query parallele usando l'id del torneo
+  const [
+    { data: teamsRaw },
+    { data: matchesRaw },
+    { data: standingsRaw },
+  ] = await Promise.all([
+    (supabase as any)
+      .from('teams')
+      .select('*')
+      .eq('tournament_id', torneo.id)
+      .order('group_name')
+      .order('name'),
+    (supabase as any)
+      .from('matches')
+      .select('*')
+      .eq('tournament_id', torneo.id)
+      .order('phase')
+      .order('round'),
+    (supabase as any)
+      .from('standings_view')
+      .select('*')
+      .eq('tournament_id', torneo.id),
+  ])
 
-  const groups = [...new Set(teams.map((t) => t.group_name).filter(Boolean))] as string[]
-  const gironeMatches = matches.filter((m) => m.phase === 'girone')
-  const elimMatches = matches.filter((m) => m.phase !== 'girone')
+  const safeTeams: Array<{
+    id: string; name: string; tournament_id: string
+    group_name: string | null; created_at: string
+  }> = teamsRaw ?? []
+
+  const safeMatches: Array<{
+    id: string; tournament_id: string; phase: string; round: number
+    team_home_id: string | null; team_away_id: string | null
+    score_home: number | null; score_away: number | null
+    scheduled_at: string; status: string; court: string | null
+  }> = matchesRaw ?? []
+
+  // Mappa a StandingRow — il DB traccia solo set, non punti individuali
+  const standings: StandingRow[] = (standingsRaw ?? []).map((r: any) => ({
+    team_id: r.team_id,
+    team_name: r.team_name,
+    group_name: r.group_name ?? '',
+    tournament_id: r.tournament_id,
+    matches_played: r.matches_played ?? 0,
+    wins: r.wins ?? 0,
+    losses: r.losses ?? 0,
+    sets_won: r.sets_won ?? 0,
+    sets_lost: r.sets_lost ?? 0,
+    points_scored: 0,
+    points_conceded: 0,
+    points: r.points ?? 0,
+  }))
+
+  const groups = [...new Set(safeTeams.map((t) => t.group_name).filter(Boolean))] as string[]
+  const gironeMatches = safeMatches.filter((m) => m.phase === 'girone')
+  const elimMatches = safeMatches.filter((m) => m.phase !== 'girone')
 
   // ── Calcolo qualificati ───────────────────────────────────
   let qualifiedIds: string[] = []
@@ -56,28 +113,24 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
 
   const allQualifiedIds = [...qualifiedIds, ...bestThirdIds]
 
-  // ── Layout colonne gironi adattivo ────────────────────────
   const gridCols =
     groups.length <= 2 ? 'grid-cols-1 sm:grid-cols-2' :
     groups.length <= 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2' :
     groups.length <= 6 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' :
                          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
 
-  // ── Fasi eliminazione ordinate ────────────────────────────
   const elimPhases = PHASE_ORDER.filter((p) =>
     p !== 'girone' && elimMatches.some((m) => m.phase === p)
   )
 
-  // ── Terze classificate (per Amatoriale) ──────────────────
   const thirds = groups.map((g) => {
     const sorted = sortGroup(standings.filter((s) => s.group_name === g))
     return sorted[2]
-  }).filter(Boolean)
-  const sortedThirds = sortGroup(thirds as typeof standings)
+  }).filter(Boolean) as StandingRow[]
+  const sortedThirds = sortGroup(thirds)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      {/* Intestazione */}
       <div className="flex items-center gap-4 mb-10">
         <Trophy size={36} className="text-amber-400 shrink-0" />
         <div>
@@ -96,8 +149,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
             {groups.map((group) => {
               const groupStandings = standings.filter((s) => s.group_name === group)
               const groupMatches = gironeMatches.filter((m) => {
-                const home = teams.find((t) => t.id === m.team_home_id)
-                const away = teams.find((t) => t.id === m.team_away_id)
+                const home = safeTeams.find((t) => t.id === m.team_home_id)
+                const away = safeTeams.find((t) => t.id === m.team_away_id)
                 return home?.group_name === group || away?.group_name === group
               })
               return (
@@ -112,9 +165,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                     {groupMatches.map((m) => (
                       <MatchCard
                         key={m.id}
-                        match={m}
-                        homeTeam={teams.find((t) => t.id === m.team_home_id)}
-                        awayTeam={teams.find((t) => t.id === m.team_away_id)}
+                        match={m as any}
+                        homeTeam={safeTeams.find((t) => t.id === m.team_home_id) as any}
+                        awayTeam={safeTeams.find((t) => t.id === m.team_away_id) as any}
                       />
                     ))}
                   </div>
@@ -178,14 +231,14 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
           </h2>
           <div className="flex flex-wrap gap-2">
             {allQualified
-              ? teams.map((t) => (
+              ? safeTeams.map((t) => (
                   <span key={t.id} className="flex items-center gap-1.5 text-sm bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-1.5 rounded-full">
                     <CheckCircle2 size={13} />
                     {t.name}
                   </span>
                 ))
               : allQualifiedIds.map((id) => {
-                  const t = teams.find((x) => x.id === id)
+                  const t = safeTeams.find((x) => x.id === id)
                   return t ? (
                     <span key={id} className="flex items-center gap-1.5 text-sm bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-1.5 rounded-full">
                       <CheckCircle2 size={13} />
@@ -208,8 +261,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
           </p>
           <div className="space-y-2 max-w-lg">
             {pairings.map(({ homeId, awayId }, i) => {
-              const home = teams.find((t) => t.id === homeId)
-              const away = teams.find((t) => t.id === awayId)
+              const home = safeTeams.find((t) => t.id === homeId)
+              const away = safeTeams.find((t) => t.id === awayId)
               return (
                 <div key={i} className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-semibold">
                   <span className="text-slate-500 text-xs w-5">Q{i + 1}</span>
@@ -238,9 +291,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                   .map((m) => (
                     <MatchCard
                       key={m.id}
-                      match={m}
-                      homeTeam={teams.find((t) => t.id === m.team_home_id)}
-                      awayTeam={teams.find((t) => t.id === m.team_away_id)}
+                      match={m as any}
+                      homeTeam={safeTeams.find((t) => t.id === m.team_home_id) as any}
+                      awayTeam={safeTeams.find((t) => t.id === m.team_away_id) as any}
                     />
                   ))}
               </div>

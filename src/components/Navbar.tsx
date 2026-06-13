@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Trophy, Star, Menu, X, LogIn, LogOut, User, ShieldAlert } from 'lucide-react'
+import { Trophy, Star, Menu, X, LogIn, LogOut, User, ShieldAlert, CalendarDays } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -86,13 +86,22 @@ export default function Navbar() {
                 I miei pronostici
               </Link>
               {isAdmin && (
-                <Link
-                  href="/admin/partite"
-                  className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
-                >
-                  <ShieldAlert size={14} />
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    href="/admin/calendario"
+                    className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                  >
+                    <CalendarDays size={14} />
+                    Calendario
+                  </Link>
+                  <Link
+                    href="/admin/partite"
+                    className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                  >
+                    <ShieldAlert size={14} />
+                    Risultati
+                  </Link>
+                </>
               )}
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <User size={14} />
@@ -154,14 +163,24 @@ export default function Navbar() {
                 I miei pronostici
               </Link>
               {isAdmin && (
-                <Link
-                  href="/admin/partite"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <ShieldAlert size={14} />
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    href="/admin/calendario"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <CalendarDays size={14} />
+                    Calendario
+                  </Link>
+                  <Link
+                    href="/admin/partite"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <ShieldAlert size={14} />
+                    Risultati
+                  </Link>
+                </>
               )}
               <div className="flex items-center gap-2 text-sm text-slate-500 py-3 border-b border-slate-800/50">
                 <User size={14} />
