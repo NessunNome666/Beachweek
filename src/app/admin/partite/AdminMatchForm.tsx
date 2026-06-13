@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, AlertCircle } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { VALID_VOLLEYBALL_SCORES } from '@/lib/scoring'
 
 interface Match {
@@ -25,14 +26,31 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
   const [selected, setSelected] = useState(initialScore)
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(match.status === 'completed')
+  const [error, setError] = useState('')
 
   async function handleSave() {
     if (!selected) return
     setLoading(true)
-    // TODO: chiamata API Supabase
-    await new Promise((r) => setTimeout(r, 500))
+    setError('')
+
+    const [scoreHome, scoreAway] = selected.split('-').map(Number)
+    const supabase = createClient()
+
+    const { error: dbError } = await supabase
+      .from('matches')
+      .update({
+        score_home: scoreHome,
+        score_away: scoreAway,
+        status: 'completed',
+      })
+      .eq('id', match.id)
+
     setLoading(false)
-    setSaved(true)
+    if (dbError) {
+      setError('Errore nel salvataggio. Riprova.')
+    } else {
+      setSaved(true)
+    }
   }
 
   const phaseLabels: Record<string, string> = {
@@ -62,7 +80,7 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
           return (
             <button
               key={key}
-              onClick={() => { setSelected(key); setSaved(false) }}
+              onClick={() => { setSelected(key); setSaved(false); setError('') }}
               className={`py-2 rounded-lg text-sm font-mono font-bold transition-colors ${
                 selected === key
                   ? 'bg-amber-400 text-slate-900'
@@ -74,6 +92,12 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
           )
         })}
       </div>
+
+      {error && (
+        <p className="flex items-center gap-1.5 text-red-400 text-xs mb-2">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
 
       <button
         onClick={handleSave}
