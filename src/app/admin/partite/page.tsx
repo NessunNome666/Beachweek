@@ -4,24 +4,29 @@ import AdminMatchForm from './AdminMatchForm'
 
 export const revalidate = 0
 
+interface Tournament { id: string; name: string; slug: string }
+interface Match {
+  id: string; tournament_id: string; phase: string; round: number
+  team_home_id: string | null; team_away_id: string | null
+  score_home: number | null; score_away: number | null
+  status: string; court: string | null
+}
+interface Team { id: string; name: string }
+
 export default async function AdminPartitePage() {
   const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sb = supabase as any
 
-  const { data: tournaments } = await supabase
-    .from('tournaments')
-    .select('id, name, slug')
-    .order('created_at')
+  const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug').order('created_at')
+  const { data: matchesRaw } = await sb.from('matches').select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, status, court').order('round')
+  const { data: teamsRaw } = await sb.from('teams').select('id, name')
 
-  const { data: matches } = await supabase
-    .from('matches')
-    .select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, status, court')
-    .order('round')
+  const tournaments = (tournamentsRaw ?? []) as Tournament[]
+  const matches = (matchesRaw ?? []) as Match[]
+  const teams = (teamsRaw ?? []) as Team[]
 
-  const { data: teams } = await supabase
-    .from('teams')
-    .select('id, name')
-
-  if (!tournaments?.length || !matches?.length) {
+  if (!tournaments.length || !matches.length) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
         <h1 className="text-2xl font-extrabold mb-4 flex items-center gap-3">
