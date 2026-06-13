@@ -21,19 +21,10 @@ interface Match {
 interface Team { id: string; name: string }
 interface Tournament { id: string; name: string; slug: string }
 
-function localDateKey(isoString: string): string {
-  // Group by Italian date (CEST = UTC+2 in summer)
-  return new Date(isoString).toLocaleDateString('it-IT', {
-    timeZone: 'Europe/Rome',
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  })
-}
-
-function isoToDateOnly(isoString: string): string {
-  // Returns "YYYY-MM-DD" in Rome timezone for sorting
-  return new Date(isoString).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
+function toGameDate(iso: string): string {
+  // Confine giornata a 06:00 ora di Roma — partite dopo mezzanotte appartengono al giorno precedente
+  return new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
+    .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 }
 
 export default async function PartitePage() {
@@ -55,17 +46,17 @@ export default async function PartitePage() {
   const teamsMap = Object.fromEntries(teams.map((t) => [t.id, { id: t.id, name: t.name }]))
   const tournamentsMap = Object.fromEntries(tournaments.map((t) => [t.id, t]))
 
-  // Group matches by date
-  const grouped = new Map<string, { label: string; dateKey: string; matches: Match[] }>()
+  // Group by game date
+  const grouped = new Map<string, { dateKey: string; matches: Match[] }>()
   for (const m of matches) {
-    const dateKey = isoToDateOnly(m.scheduled_at)
-    const label = localDateKey(m.scheduled_at)
-    if (!grouped.has(dateKey)) grouped.set(dateKey, { label, dateKey, matches: [] })
+    const dateKey = toGameDate(m.scheduled_at)
+    if (!grouped.has(dateKey)) grouped.set(dateKey, { dateKey, matches: [] })
     grouped.get(dateKey)!.matches.push(m)
   }
 
-  const today = isoToDateOnly(new Date().toISOString())
   const groups = Array.from(grouped.values())
+  const firstGameDate = groups.length > 0 ? groups[0].dateKey : null
+  const todayGameDate = toGameDate(new Date().toISOString())
 
   if (groups.length === 0) {
     return (
@@ -85,14 +76,18 @@ export default async function PartitePage() {
       <p className="text-slate-400 mb-10">Tutte le partite dei tornei, in ordine cronologico.</p>
 
       <div className="space-y-10">
-        {groups.map(({ label, dateKey, matches: dayMatches }) => {
-          const isToday = dateKey === today
-          const isPast = dateKey < today
+        {groups.map(({ dateKey, matches: dayMatches }) => {
+          const dayIndex = Math.round(
+            (new Date(dateKey).getTime() - new Date(firstGameDate!).getTime()) / 86400000
+          ) + 1
+          const isToday = dateKey === todayGameDate
+          const isPast = dateKey < todayGameDate
+
           return (
             <section key={dateKey}>
               <div className="flex items-center gap-3 mb-4">
-                <h2 className={`text-base font-bold capitalize ${isToday ? 'text-orange-400' : isPast ? 'text-slate-600' : 'text-white'}`}>
-                  {label}
+                <h2 className={`text-base font-bold ${isToday ? 'text-orange-400' : isPast ? 'text-slate-600' : 'text-white'}`}>
+                  Giorno {dayIndex}
                 </h2>
                 {isToday && (
                   <span className="text-xs font-semibold bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">

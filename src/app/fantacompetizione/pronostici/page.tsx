@@ -56,7 +56,21 @@ export default async function PronosticiPage() {
   )
 
   const completedMatches = matches.filter((m) => m.status === 'completed')
-  const pendingMatches = matches.filter((m) => m.status !== 'completed')
+
+  // Confine giornata a 06:00 Roma — partite dopo mezzanotte appartengono al giorno precedente
+  const toGameDate = (iso: string) =>
+    new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
+      .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
+
+  const allPending = matches.filter((m) => m.status !== 'completed')
+  const firstGameDate = matches.length > 0 ? toGameDate(matches[0].scheduled_at) : null
+  const nextGameDay = allPending.length > 0 ? toGameDate(allPending[0].scheduled_at) : null
+  const pendingMatches = nextGameDay
+    ? allPending.filter((m) => toGameDate(m.scheduled_at) === nextGameDay)
+    : []
+  const nextDayIndex = firstGameDate && nextGameDay
+    ? Math.round((new Date(nextGameDay).getTime() - new Date(firstGameDate).getTime()) / 86400000) + 1
+    : null
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -87,10 +101,12 @@ export default async function PronosticiPage() {
         </section>
       )}
 
-      {/* Pending matches — batch form */}
+      {/* Pending matches — batch form, solo il prossimo giorno di gioco */}
       {pendingMatches.length > 0 ? (
         <section className="mb-12">
-          <h2 className="text-lg font-bold mb-4">Partite da pronosticare</h2>
+          <h2 className="text-lg font-bold mb-4">
+            Partite da pronosticare{nextDayIndex !== null ? ` — Giorno ${nextDayIndex}` : ''}
+          </h2>
           <PredictionsBatchForm
             matches={pendingMatches.map((m) => ({
               id: m.id,
