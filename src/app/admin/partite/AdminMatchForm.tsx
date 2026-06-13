@@ -36,13 +36,10 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
     const [scoreHome, scoreAway] = selected.split('-').map(Number)
     const supabase = createClient()
 
-    const { error: dbError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: dbError } = await (supabase as any)
       .from('matches')
-      .update({
-        score_home: scoreHome,
-        score_away: scoreAway,
-        status: 'completed',
-      })
+      .update({ score_home: scoreHome, score_away: scoreAway, status: 'completed' })
       .eq('id', match.id)
 
     setLoading(false)
