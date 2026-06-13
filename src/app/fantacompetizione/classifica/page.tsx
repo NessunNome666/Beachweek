@@ -1,8 +1,23 @@
 import { Trophy, Medal } from 'lucide-react'
-import { FANTA_LEADERBOARD } from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/server'
 
-export default function FantaClassificaPage() {
-  const sorted = [...FANTA_LEADERBOARD].sort((a, b) => b.total_points - a.total_points)
+export const revalidate = 0
+
+interface LeaderboardRow {
+  user_id: string
+  display_name: string
+  total_points: number
+  match_points: number
+  winner_points: number
+  correct_exact: number
+  correct_winner: number
+}
+
+export default async function FantaClassificaPage() {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any).from('fanta_leaderboard').select('*')
+  const sorted = (data ?? []) as LeaderboardRow[]
 
   const podiumColors = ['text-amber-400', 'text-slate-300', 'text-amber-600']
 
@@ -31,7 +46,7 @@ export default function FantaClassificaPage() {
             <div className="flex-1">
               <div className="font-semibold">{row.display_name}</div>
               <div className="text-xs text-slate-500 mt-0.5">
-                {row.correct_exact} esatti · {row.correct_winner} vincitori · {row.winner_points > 0 ? `+${row.winner_points}pt torneo` : ''}
+                {row.correct_exact} esatti · {row.correct_winner} vincitori{row.winner_points > 0 ? ` · +${row.winner_points}pt torneo` : ''}
               </div>
             </div>
             <div className="text-right">
