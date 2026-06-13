@@ -9,7 +9,7 @@ export const revalidate = 0
 interface Match {
   id: string; tournament_id: string; phase: string; round: number
   team_home_id: string | null; team_away_id: string | null; status: string
-  score_home: number | null; score_away: number | null
+  score_home: number | null; score_away: number | null; scheduled_at: string
 }
 interface Team { id: string; name: string; tournament_id: string }
 interface Tournament { id: string; name: string; slug: string; predictions_locked: boolean }
@@ -25,7 +25,7 @@ export default async function PronosticiPage() {
 
   const { data: matchesRaw } = await sb
     .from('matches')
-    .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away')
+    .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away, scheduled_at')
     .eq('phase', 'girone')
     .order('scheduled_at')
 
