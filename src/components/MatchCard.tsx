@@ -1,4 +1,4 @@
-import { Clock, MapPin, AlertTriangle } from 'lucide-react'
+import { Clock, AlertTriangle } from 'lucide-react'
 import { formatScore } from '@/lib/scoring'
 
 interface Team {
@@ -56,12 +56,6 @@ export default function MatchCard({
       <div className="flex items-center justify-between mb-2 text-xs text-slate-500">
         <span>{PHASE_LABEL[match.phase] ?? match.phase} — Round {match.round}</span>
         <div className="flex items-center gap-3">
-          {match.court && (
-            <span className="flex items-center gap-1">
-              <MapPin size={10} />
-              {match.court}
-            </span>
-          )}
           {isPostponed ? (
             <span className="flex items-center gap-1 text-orange-400 font-semibold">
               <AlertTriangle size={10} />

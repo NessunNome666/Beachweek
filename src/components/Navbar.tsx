@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 
 const links = [
   { href: '/tornei', label: 'Tornei' },
+  { href: '/partite', label: 'Partite' },
   { href: '/fantacompetizione', label: 'Fanta' },
   { href: '/fantacompetizione/classifica', label: 'Classifica Fanta' },
 ]

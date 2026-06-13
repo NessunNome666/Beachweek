@@ -8,6 +8,7 @@ export const revalidate = 0
 interface Match {
   id: string; tournament_id: string; phase: string; round: number
   team_home_id: string | null; team_away_id: string | null; status: string
+  score_home: number | null; score_away: number | null
 }
 interface Team { id: string; name: string; tournament_id: string }
 interface Tournament { id: string; name: string; slug: string; predictions_locked: boolean }
@@ -21,7 +22,13 @@ export default async function PronosticiPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: matchesRaw } = await sb.from('matches').select('id, tournament_id, phase, round, team_home_id, team_away_id, status').eq('status', 'scheduled').eq('phase', 'girone')
+  // Fetch all girone matches (not just scheduled) so we can show prediction results
+  const { data: matchesRaw } = await sb
+    .from('matches')
+    .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away')
+    .eq('phase', 'girone')
+    .order('scheduled_at')
+
   const { data: teamsRaw } = await sb.from('teams').select('id, name, tournament_id')
   const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug, predictions_locked').order('created_at')
 
@@ -47,35 +54,63 @@ export default async function PronosticiPage() {
     existingWinnerPredictions.map((p) => [p.tournament_id, p.predicted_team_id])
   )
 
+  const completedMatches = matches.filter((m) => m.status === 'completed')
+  const pendingMatches = matches.filter((m) => m.status !== 'completed')
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-3">
         <Star className="text-amber-400" size={32} />
         I miei pronostici
       </h1>
-      <p className="text-slate-400 mb-10">Inserisci i punteggi che prevedi per le partite di oggi.</p>
+      <p className="text-slate-400 mb-10">Inserisci i punteggi che prevedi per le partite di gironi.</p>
 
-      {matches.length > 0 ? (
-        <section className="mb-12">
-          <h2 className="text-lg font-bold mb-4">Partite in programma</h2>
-          <div className="space-y-4">
-            {matches.map((match) => (
+      {/* Completed matches — show results */}
+      {completedMatches.length > 0 && (
+        <section className="mb-10">
+          <h2 className="text-lg font-bold mb-4">Risultati pronostici</h2>
+          <div className="space-y-3">
+            {completedMatches.map((match) => (
               <PredictionForm
                 key={match.id}
                 matchId={match.id}
                 homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
                 awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
                 initialPrediction={predMap[match.id]}
+                matchStatus={match.status}
+                actualHome={match.score_home}
+                actualAway={match.score_away}
               />
             ))}
           </div>
         </section>
-      ) : (
+      )}
+
+      {/* Pending matches — show form */}
+      {pendingMatches.length > 0 ? (
+        <section className="mb-12">
+          <h2 className="text-lg font-bold mb-4">Partite da pronosticare</h2>
+          <div className="space-y-4">
+            {pendingMatches.map((match) => (
+              <PredictionForm
+                key={match.id}
+                matchId={match.id}
+                homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
+                awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
+                initialPrediction={predMap[match.id]}
+                matchStatus={match.status}
+                actualHome={match.score_home}
+                actualAway={match.score_away}
+              />
+            ))}
+          </div>
+        </section>
+      ) : completedMatches.length === 0 ? (
         <div className="text-center py-16 text-slate-500 mb-12">
           <Star size={48} className="mx-auto mb-4 opacity-30" />
           <p>Nessuna partita in programma al momento.</p>
         </div>
-      )}
+      ) : null}
 
       <section>
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
