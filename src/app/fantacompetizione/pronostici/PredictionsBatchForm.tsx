@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Loader2, AlertCircle } from 'lucide-react'
+import { Check, Loader2, AlertCircle, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VALID_VOLLEYBALL_SCORES } from '@/lib/scoring'
 
@@ -18,24 +18,29 @@ interface Props {
 }
 
 export default function PredictionsBatchForm({ matches }: Props) {
-  const [selections, setSelections] = useState<Record<string, string>>(
-    Object.fromEntries(matches.filter((m) => m.initialPrediction).map((m) => [m.id, m.initialPrediction!]))
-  )
+  // Solo partite senza pronostico esistente sono modificabili
+  const lockedMatches = new Set(matches.filter((m) => m.initialPrediction).map((m) => m.id))
+  const [selections, setSelections] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [savedCount, setSavedCount] = useState(0)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
 
-  const pendingCount = Object.values(selections).filter(Boolean).length
+  const openMatches = matches.filter((m) => !lockedMatches.has(m.id))
+  const pendingCount = openMatches.filter((m) => selections[m.id]).length
 
   function select(matchId: string, score: string) {
+    if (lockedMatches.has(matchId)) return
     setSelections((prev) => ({ ...prev, [matchId]: score }))
     setDone(false)
     setError('')
   }
 
   async function handleSaveAll() {
-    const entries = Object.entries(selections).filter(([, v]) => v)
+    // Invia solo partite non bloccate con una selezione
+    const entries = openMatches
+      .filter((m) => selections[m.id])
+      .map((m) => [m.id, selections[m.id]] as [string, string])
     if (entries.length === 0) return
     setLoading(true)
     setError('')
@@ -51,10 +56,7 @@ export default function PredictionsBatchForm({ matches }: Props) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: dbError } = await (supabase as any)
         .from('predictions_match')
-        .upsert(
-          { user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway },
-          { onConflict: 'user_id,match_id' }
-        )
+        .insert({ user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway })
       if (!dbError) saved++
     }
 
@@ -68,13 +70,31 @@ export default function PredictionsBatchForm({ matches }: Props) {
   }
 
   if (matches.length === 0) return null
+  const allLocked = openMatches.length === 0
 
   return (
     <div>
       <div className="space-y-4 mb-6">
         {matches.map((match) => {
-          const selected = selections[match.id] ?? ''
+          const isLocked = lockedMatches.has(match.id)
+          const selected = isLocked ? match.initialPrediction! : (selections[match.id] ?? '')
           const isPostponed = match.matchStatus === 'postponed'
+
+          if (isLocked) {
+            return (
+              <div key={match.id} className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 opacity-70">
+                <div className="flex items-center justify-between text-sm font-semibold">
+                  <span className="flex-1 truncate text-slate-400">{match.homeTeamName}</span>
+                  <span className="flex items-center gap-1.5 font-mono font-bold text-slate-400 px-3">
+                    <Lock size={10} className="text-slate-600" />
+                    {selected.replace('-', ' - ')}
+                  </span>
+                  <span className="flex-1 truncate text-right text-slate-400">{match.awayTeamName}</span>
+                </div>
+              </div>
+            )
+          }
+
           return (
             <div
               key={match.id}
@@ -119,7 +139,7 @@ export default function PredictionsBatchForm({ matches }: Props) {
         </p>
       )}
 
-      <button
+      {!allLocked && <button
         onClick={handleSaveAll}
         disabled={pendingCount === 0 || loading}
         className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold transition-colors ${
@@ -135,7 +155,7 @@ export default function PredictionsBatchForm({ matches }: Props) {
         ) : (
           `Conferma tutti (${pendingCount} pronostici)`
         )}
-      </button>
+      </button>}
     </div>
   )
 }

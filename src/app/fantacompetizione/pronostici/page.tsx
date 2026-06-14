@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import PredictionForm from './PredictionForm'
 import PredictionsBatchForm from './PredictionsBatchForm'
 import WinnerPredictionForm from './WinnerPredictionForm'
+import ResultsCollapse from './ResultsCollapse'
 
 export const revalidate = 0
 
@@ -62,7 +63,8 @@ export default async function PronosticiPage() {
     new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
       .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 
-  const allPending = matches.filter((m) => m.status !== 'completed')
+  // Solo partite ancora schedulabili: in_progress e completed non si possono pronosticare
+  const allPending = matches.filter((m) => m.status === 'scheduled')
   const firstGameDate = matches.length > 0 ? toGameDate(matches[0].scheduled_at) : null
   const nextGameDay = allPending.length > 0 ? toGameDate(allPending[0].scheduled_at) : null
   const pendingMatches = nextGameDay
@@ -80,25 +82,22 @@ export default async function PronosticiPage() {
       </h1>
       <p className="text-slate-400 mb-10">Pronostica i risultati delle partite di girone e il podio finale dei tornei. Guadagni punti ad ogni indovinello.</p>
 
-      {/* Completed matches — show results */}
+      {/* Completed matches — collapsible results */}
       {completedMatches.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-lg font-bold mb-4">Risultati pronostici</h2>
-          <div className="space-y-3">
-            {completedMatches.map((match) => (
-              <PredictionForm
-                key={match.id}
-                matchId={match.id}
-                homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
-                awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
-                initialPrediction={predMap[match.id]}
-                matchStatus={match.status}
-                actualHome={match.score_home}
-                actualAway={match.score_away}
-              />
-            ))}
-          </div>
-        </section>
+        <ResultsCollapse count={completedMatches.length}>
+          {completedMatches.map((match) => (
+            <PredictionForm
+              key={match.id}
+              matchId={match.id}
+              homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
+              awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
+              initialPrediction={predMap[match.id]}
+              matchStatus={match.status}
+              actualHome={match.score_home}
+              actualAway={match.score_away}
+            />
+          ))}
+        </ResultsCollapse>
       )}
 
       {/* Pending matches — batch form, solo il prossimo giorno di gioco */}
