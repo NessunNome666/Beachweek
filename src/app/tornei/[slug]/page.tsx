@@ -17,10 +17,11 @@ const PHASE_LABEL: Record<string, string> = {
   finale: 'Finale',
 }
 
-const SLUG_TO_TID: Record<string, 'ama' | 'pro' | 'fv'> = {
+const SLUG_TO_TID: Record<string, 'ama' | 'pro' | 'fv' | 'test'> = {
   'beach-volley-amatoriale': 'ama',
   'beach-volley-pro': 'pro',
   'foot-volley-2v2': 'fv',
+  'test-torneo': 'test',
 }
 
 export default async function TorneoPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -71,7 +72,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   const safeMatches: Array<{
     id: string; tournament_id: string; phase: string; round: number
     team_home_id: string | null; team_away_id: string | null
-    score_home: number | null; score_away: number | null
+    score_home: number | null; score_away: number | null; score_detail: string | null
     scheduled_at: string; status: string; court: string | null
   }> = matchesRaw ?? []
 
