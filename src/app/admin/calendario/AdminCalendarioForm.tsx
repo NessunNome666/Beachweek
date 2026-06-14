@@ -30,8 +30,6 @@ const PHASE_LABEL: Record<string, string> = {
   terzo_posto: '3° Posto',
 }
 
-const COURTS = ['Campo 1', 'Campo 2', 'Campo 3', 'Campo 4']
-
 // Converte timestamptz UTC in stringa locale per <input type="datetime-local">
 function toLocalDatetimeInput(utcStr: string): string {
   const d = new Date(utcStr)
@@ -47,7 +45,6 @@ function fromLocalDatetimeInput(local: string): string {
 export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName }: Props) {
   const [open, setOpen] = useState(false)
   const [scheduledAt, setScheduledAt] = useState(toLocalDatetimeInput(match.scheduled_at))
-  const [court, setCourt] = useState(match.court ?? '')
   const [status, setStatus] = useState<'scheduled' | 'postponed'>(
     match.status === 'postponed' ? 'postponed' : 'scheduled'
   )
@@ -66,7 +63,6 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
       .from('matches')
       .update({
         scheduled_at: fromLocalDatetimeInput(scheduledAt),
-        court: court || null,
         status,
         notes: notes || null,
       })
@@ -93,7 +89,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-1">
             <span className="text-xs text-slate-500 shrink-0">
               {PHASE_LABEL[match.phase] ?? match.phase} R{match.round}
             </span>
@@ -102,7 +98,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
             )}
           </div>
           <span className="font-medium text-sm truncate">{homeTeamName}</span>
-          <span className="text-xs text-slate-400 truncate">vs {awayTeamName}</span>
+          <span className="font-medium text-sm text-slate-400 truncate">vs {awayTeamName}</span>
         </div>
         <div className="flex flex-col items-end gap-0.5 shrink-0 ml-3">
           <span className="text-xs text-slate-600">
@@ -110,37 +106,21 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
             {' '}
             {new Date(match.scheduled_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
           </span>
-          {match.court && <span className="text-xs text-slate-500">{match.court}</span>}
-          {open ? <ChevronUp size={14} className="text-slate-500 mt-0.5" /> : <ChevronDown size={14} className="text-slate-500 mt-0.5" />}
+          {open ? <ChevronUp size={14} className="text-slate-500 mt-1" /> : <ChevronDown size={14} className="text-slate-500 mt-1" />}
         </div>
       </button>
 
       {/* Form espandibile */}
       {open && (
         <div className="px-4 pb-4 border-t border-slate-800 pt-4 space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Data e ora */}
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Data e ora</label>
-              <input
-                type="datetime-local"
-                value={scheduledAt}
-                onChange={(e) => { setScheduledAt(e.target.value); setSaved(false) }}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-400"
-              />
-            </div>
-            {/* Campo */}
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Campo</label>
-              <select
-                value={court}
-                onChange={(e) => { setCourt(e.target.value); setSaved(false) }}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-400"
-              >
-                <option value="">— non assegnato —</option>
-                {COURTS.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">Data e ora</label>
+            <input
+              type="datetime-local"
+              value={scheduledAt}
+              onChange={(e) => { setScheduledAt(e.target.value); setSaved(false) }}
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-400"
+            />
           </div>
 
           {/* Stato */}

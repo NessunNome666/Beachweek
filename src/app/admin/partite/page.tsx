@@ -10,6 +10,7 @@ interface Match {
   team_home_id: string | null; team_away_id: string | null
   score_home: number | null; score_away: number | null
   score_detail: string | null; status: string; court: string | null
+  scheduled_at: string
 }
 interface Team { id: string; name: string }
 
@@ -19,7 +20,11 @@ export default async function AdminPartitePage() {
   const sb = supabase as any
 
   const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug').order('created_at')
-  const { data: matchesRaw } = await sb.from('matches').select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, score_detail, status, court').order('round')
+  const { data: matchesRaw } = await sb
+    .from('matches')
+    .select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, score_detail, status, court, scheduled_at')
+    .order('scheduled_at')
+    .order('round')
   const { data: teamsRaw } = await sb.from('teams').select('id, name')
 
   const tournaments = (tournamentsRaw ?? []) as Tournament[]

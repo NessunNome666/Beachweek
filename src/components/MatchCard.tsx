@@ -14,6 +14,7 @@ interface Match {
   team_away_id: string | null
   score_home: number | null
   score_away: number | null
+  score_detail?: string | null
   scheduled_at: string
   status: string
   court: string | null
@@ -93,6 +94,16 @@ export default function MatchCard({
           {awayTeam?.name ?? 'Da definire'}
         </span>
       </div>
+
+      {isCompleted && match.score_detail && (
+        <div className="flex justify-center gap-2 mt-2">
+          {match.score_detail.split(',').map((s, i) => (
+            <span key={i} className="text-xs text-slate-500 font-mono">
+              {i > 0 && <span className="mr-2 text-slate-700">·</span>}Set {i + 1}: {s}
+            </span>
+          ))}
+        </div>
+      )}
 
       {!isCompleted && (
         <div className="flex items-center gap-1 mt-2 text-xs text-slate-500">

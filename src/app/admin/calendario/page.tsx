@@ -1,6 +1,7 @@
 import { CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import AdminCalendarioForm from './AdminCalendarioForm'
+import DayAccordion from '@/components/DayAccordion'
 
 export const revalidate = 0
 
@@ -57,6 +58,7 @@ export default async function AdminCalendarioPage() {
   }
   const days = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b))
   const firstDate = days[0]?.[0] ?? null
+  const todayKey = toGameDate(new Date().toISOString())
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -68,15 +70,22 @@ export default async function AdminCalendarioPage() {
         Clicca su una partita per modificare data, orario, stato o aggiungere una nota. Le modifiche sono visibili subito.
       </p>
 
-      <div className="space-y-10">
+      <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {
           const dayIndex = firstDate
             ? Math.round((new Date(dateKey).getTime() - new Date(firstDate).getTime()) / 86400000) + 1
             : 1
+          const isToday = dateKey === todayKey
+          const isPast = dateKey < todayKey
           return (
-            <section key={dateKey}>
-              <h2 className="text-base font-bold text-white mb-4">Giorno {dayIndex}</h2>
-              <div className="space-y-2">
+            <DayAccordion
+              key={dateKey}
+              dayLabel={`Giorno ${dayIndex}`}
+              isToday={isToday}
+              isPast={isPast}
+              defaultOpen={!isPast}
+            >
+              <div className="space-y-2 mb-4">
                 {dayMatches.map((match) => {
                   const tournament = tournamentsMap[match.tournament_id]
                   return (
@@ -93,7 +102,7 @@ export default async function AdminCalendarioPage() {
                   )
                 })}
               </div>
-            </section>
+            </DayAccordion>
           )
         })}
       </div>
