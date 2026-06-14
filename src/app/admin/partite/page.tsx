@@ -1,10 +1,10 @@
 import { Shield } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import AdminMatchForm from './AdminMatchForm'
+import DayAccordion from '@/components/DayAccordion'
 
 export const revalidate = 0
 
-interface Tournament { id: string; name: string; slug: string }
 interface Match {
   id: string; tournament_id: string; phase: string; round: number
   team_home_id: string | null; team_away_id: string | null
@@ -13,6 +13,12 @@ interface Match {
   scheduled_at: string
 }
 interface Team { id: string; name: string }
+interface Tournament { id: string; name: string; slug: string }
+
+function toGameDate(iso: string): string {
+  return new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
+    .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
+}
 
 export default async function AdminPartitePage() {
   const supabase = await createClient()
@@ -31,7 +37,7 @@ export default async function AdminPartitePage() {
   const matches = (matchesRaw ?? []) as Match[]
   const teams = (teamsRaw ?? []) as Team[]
 
-  if (!tournaments.length || !matches.length) {
+  if (!matches.length) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
         <h1 className="text-2xl font-extrabold mb-4 flex items-center gap-3">
@@ -43,7 +49,19 @@ export default async function AdminPartitePage() {
     )
   }
 
-  const teamsMap = Object.fromEntries((teams ?? []).map((t) => [t.id, t.name]))
+  const teamsMap = Object.fromEntries(teams.map((t) => [t.id, t.name]))
+  const tournamentsMap = Object.fromEntries(tournaments.map((t) => [t.id, t]))
+
+  // Raggruppa per giornata (stesso criterio di /partite)
+  const grouped = new Map<string, Match[]>()
+  for (const m of matches) {
+    const dateKey = toGameDate(m.scheduled_at)
+    if (!grouped.has(dateKey)) grouped.set(dateKey, [])
+    grouped.get(dateKey)!.push(m)
+  }
+  const days = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b))
+  const firstDate = days[0]?.[0] ?? null
+  const todayKey = toGameDate(new Date().toISOString())
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -55,25 +73,48 @@ export default async function AdminPartitePage() {
         Clicca su una partita, inserisci il punteggio e salva. Le classifiche si aggiornano automaticamente.
       </p>
 
-      {tournaments.map((tournament) => {
-        const tournamentMatches = matches.filter((m) => m.tournament_id === tournament.id)
-        if (tournamentMatches.length === 0) return null
-        return (
-          <section key={tournament.id} className="mb-10">
-            <h2 className="text-lg font-bold mb-4 text-amber-400">{tournament.name}</h2>
-            <div className="space-y-3">
-              {tournamentMatches.map((match) => (
-                <AdminMatchForm
-                  key={match.id}
-                  match={match}
-                  homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
-                  awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
-                />
-              ))}
-            </div>
-          </section>
-        )
-      })}
+      <div className="space-y-6">
+        {days.map(([dateKey, dayMatches]) => {
+          const dayIndex = firstDate
+            ? Math.round((new Date(dateKey).getTime() - new Date(firstDate).getTime()) / 86400000) + 1
+            : 1
+          const isToday = dateKey === todayKey
+          const isPast = dateKey < todayKey
+
+          return (
+            <DayAccordion
+              key={dateKey}
+              dayLabel={`Giorno ${dayIndex}`}
+              isToday={isToday}
+              isPast={isPast}
+              defaultOpen={!isPast}
+              badge={isToday ? (
+                <span className="text-xs font-semibold bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
+                  Oggi
+                </span>
+              ) : undefined}
+            >
+              <div className="space-y-3 mb-4">
+                {dayMatches.map((match) => {
+                  const tournament = tournamentsMap[match.tournament_id]
+                  return (
+                    <div key={match.id}>
+                      {tournament && (
+                        <p className="text-xs text-slate-600 mb-1 ml-1">{tournament.name}</p>
+                      )}
+                      <AdminMatchForm
+                        match={match}
+                        homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
+                        awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+            </DayAccordion>
+          )
+        })}
+      </div>
     </div>
   )
 }

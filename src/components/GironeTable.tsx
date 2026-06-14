@@ -9,7 +9,6 @@ interface Props {
 
 export default function GironeTable({ standings, qualifiedIds = [], allQualified = false }: Props) {
   const sorted = sortGroup(standings)
-  const showPoints = sorted.some((r) => (r.points_scored ?? 0) > 0)
 
   function badge(teamId: string, position: number) {
     if (allQualified || qualifiedIds.includes(teamId)) {
@@ -40,8 +39,7 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
             <th className="px-2 py-2 font-medium">V</th>
             <th className="px-2 py-2 font-medium">P</th>
             <th className="px-2 py-2 font-medium">Set</th>
-            {showPoints && <th className="px-2 py-2 font-medium">Punti</th>}
-            {showPoints && <th className="px-2 py-2 font-medium">Qp</th>}
+            <th className="px-2 py-2 font-medium">Δpt</th>
             <th className="px-2 py-2 font-medium text-amber-400">Pt</th>
           </tr>
         </thead>
@@ -66,18 +64,9 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
               <td className="px-2 py-2 text-center text-slate-400">
                 {row.sets_won}-{row.sets_lost}
               </td>
-              {showPoints && (
-                <td className="px-2 py-2 text-center text-slate-400 text-xs">
-                  {row.points_scored ?? 0}-{row.points_conceded ?? 0}
-                </td>
-              )}
-              {showPoints && (
-                <td className="px-2 py-2 text-center text-slate-400 text-xs">
-                  {(row.points_conceded ?? 0) > 0
-                    ? ((row.points_scored ?? 0) / (row.points_conceded ?? 1)).toFixed(2)
-                    : '—'}
-                </td>
-              )}
+              <td className="px-2 py-2 text-center text-slate-400">
+                {row.points_scored ?? 0}-{row.points_conceded ?? 0}
+              </td>
               <td className="px-2 py-2 text-center font-bold text-amber-400">{row.points}</td>
             </tr>
           ))}
