@@ -14,6 +14,7 @@ interface Match {
   team_away_id: string | null
   score_home: number | null
   score_away: number | null
+  score_detail: string | null
   scheduled_at: string
   status: string
   court: string | null
@@ -34,7 +35,7 @@ export default async function PartitePage() {
 
   const { data: matchesRaw } = await sb
     .from('matches')
-    .select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, scheduled_at, status, court, notes')
+    .select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, score_detail, scheduled_at, status, court, notes')
     .order('scheduled_at')
 
   const { data: teamsRaw } = await sb.from('teams').select('id, name')
