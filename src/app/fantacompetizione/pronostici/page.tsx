@@ -78,7 +78,7 @@ export default async function PronosticiPage() {
         <Star className="text-amber-400" size={32} />
         I miei pronostici
       </h1>
-      <p className="text-slate-400 mb-10">Inserisci i punteggi che prevedi per le partite di gironi.</p>
+      <p className="text-slate-400 mb-10">Pronostica i risultati delle partite di girone e il podio finale dei tornei. Guadagni punti ad ogni indovinello.</p>
 
       {/* Completed matches — show results */}
       {completedMatches.length > 0 && (

@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Trophy, Star, Menu, X, LogIn, LogOut, User, ShieldAlert, CalendarDays } from 'lucide-react'
+import { Star, Menu, X, LogIn, LogOut, User, ShieldAlert, CalendarDays } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const links = [
+const allLinks = [
   { href: '/tornei', label: 'Tornei' },
   { href: '/partite', label: 'Partite' },
-  { href: '/fantacompetizione', label: 'Fanta' },
+  { href: '/fantacompetizione', label: 'Fanta', hideWhenLoggedIn: true },
   { href: '/fantacompetizione/classifica', label: 'Classifica Fanta' },
 ]
 
@@ -54,12 +54,12 @@ export default function Navbar() {
   }
 
   const isLoggedIn = displayName !== null
+  const links = allLinks.filter((l) => !l.hideWhenLoggedIn || !isLoggedIn)
 
   return (
     <header className="sticky top-0 z-50 bg-[#0d0520]/85 backdrop-blur border-b border-orange-900/40">
       <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-white hover:text-orange-400 transition-colors">
-          <Trophy size={22} className="text-orange-400" />
+        <Link href="/" className="font-bold text-lg text-white hover:text-orange-400 transition-colors">
           Tito Beach Week 2026
         </Link>
 
@@ -183,17 +183,19 @@ export default function Navbar() {
                   </Link>
                 </>
               )}
-              <div className="flex items-center gap-2 text-sm text-slate-500 py-3 border-b border-slate-800/50">
-                <User size={14} />
-                <span className="truncate max-w-[200px]">{displayName}</span>
+              <div className="flex items-center justify-between py-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <User size={14} />
+                  <span className="truncate max-w-[160px]">{displayName}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-sm font-medium text-slate-300 hover:text-red-400 transition-colors"
+                >
+                  <LogOut size={14} />
+                  Esci
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-sm font-medium py-3 text-slate-300 hover:text-red-400 transition-colors text-left"
-              >
-                <LogOut size={14} />
-                Esci
-              </button>
             </>
           ) : (
             <Link

@@ -1,6 +1,7 @@
 import { CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import MatchCard from '@/components/MatchCard'
+import DayAccordion from '@/components/DayAccordion'
 
 export const revalidate = 0
 
@@ -83,21 +84,27 @@ export default async function PartitePage() {
           const isToday = dateKey === todayGameDate
           const isPast = dateKey < todayGameDate
 
-          return (
-            <section key={dateKey}>
-              <div className="flex items-center gap-3 mb-4">
-                <h2 className={`text-base font-bold ${isToday ? 'text-orange-400' : isPast ? 'text-slate-600' : 'text-white'}`}>
-                  Giorno {dayIndex}
-                </h2>
-                {isToday && (
-                  <span className="text-xs font-semibold bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
-                    Oggi
-                  </span>
-                )}
-              </div>
+          // Filtra partite eliminazione senza squadre reali
+          const visibleMatches = dayMatches.filter(
+            (m) => m.phase === 'girone' || (m.team_home_id && m.team_away_id)
+          )
+          if (visibleMatches.length === 0) return null
 
-              <div className="space-y-3">
-                {dayMatches.map((match) => {
+          return (
+            <DayAccordion
+              key={dateKey}
+              dayLabel={`Giorno ${dayIndex}`}
+              isToday={isToday}
+              isPast={isPast}
+              defaultOpen={!isPast}
+              badge={isToday ? (
+                <span className="text-xs font-semibold bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
+                  Oggi
+                </span>
+              ) : undefined}
+            >
+              <div className="space-y-3 mb-4">
+                {visibleMatches.map((match) => {
                   const tournament = tournamentsMap[match.tournament_id]
                   return (
                     <div key={match.id}>
@@ -113,7 +120,7 @@ export default async function PartitePage() {
                   )
                 })}
               </div>
-            </section>
+            </DayAccordion>
           )
         })}
       </div>

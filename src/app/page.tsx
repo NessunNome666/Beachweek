@@ -23,14 +23,14 @@ export default function Home() {
         <div className="flex-1 space-y-6">
           <div className="inline-flex items-center gap-2 text-orange-400 text-sm font-semibold bg-orange-500/15 px-3 py-1.5 rounded-full">
             <Calendar size={14} />
-            Giugno 2026
+            Luglio 2026
           </div>
           <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight">
             Tito Beach Week<br />
             <span className="bg-gradient-to-r from-orange-400 to-fuchsia-400 bg-clip-text text-transparent">2026</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-md">
-            Tre tornei di pallavolo, risultati in tempo reale e la tua chance di vincere la fantacompetizione.
+            Tre tornei sulla sabbia, risultati in tempo reale e la tua chance di vincere la fantacompetizione.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link
@@ -113,7 +113,7 @@ export default function Home() {
             {[
               { pts: '3 pt', label: 'Risultato esatto' },
               { pts: '1 pt', label: 'Vincitore corretto' },
-              { pts: '5 pt', label: 'Vincitore torneo' },
+              { pts: '5 pt', label: 'Podio torneo' },
             ].map(({ pts, label }) => (
               <div key={label} className="text-center">
                 <div className="text-2xl font-bold text-orange-400">{pts}</div>

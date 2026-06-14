@@ -7,6 +7,7 @@ import {
 import type { StandingRow } from '@/lib/qualification'
 import GironeTable from '@/components/GironeTable'
 import MatchCard from '@/components/MatchCard'
+import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 
 const PHASE_ORDER = ['girone', 'quarti', 'semifinale', 'terzo_posto', 'finale']
 const PHASE_LABEL: Record<string, string> = {
@@ -85,8 +86,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     losses: r.losses ?? 0,
     sets_won: r.sets_won ?? 0,
     sets_lost: r.sets_lost ?? 0,
-    points_scored: 0,
-    points_conceded: 0,
+    points_scored: r.points_scored ?? 0,
+    points_conceded: r.points_conceded ?? 0,
     points: r.points ?? 0,
   }))
 
@@ -119,9 +120,11 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     groups.length <= 6 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' :
                          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
 
-  const elimPhases = PHASE_ORDER.filter((p) =>
-    p !== 'girone' && elimMatches.some((m) => m.phase === p)
-  )
+  const hasRealElimMatches = elimMatches.some((m) => m.team_home_id && m.team_away_id)
+
+  const elimPhases = hasRealElimMatches
+    ? PHASE_ORDER.filter((p) => p !== 'girone' && elimMatches.some((m) => m.phase === p && m.team_home_id && m.team_away_id))
+    : []
 
   const thirds = groups.map((g) => {
     const sorted = sortGroup(standings.filter((s) => s.group_name === g))
@@ -161,7 +164,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                     qualifiedIds={allQualifiedIds}
                     allQualified={allQualified}
                   />
-                  <div className="space-y-2">
+                  <GroupMatchesAccordion>
                     {groupMatches.map((m) => (
                       <MatchCard
                         key={m.id}
@@ -170,7 +173,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                         awayTeam={safeTeams.find((t) => t.id === m.team_away_id) as any}
                       />
                     ))}
-                  </div>
+                  </GroupMatchesAccordion>
                 </div>
               )
             })}

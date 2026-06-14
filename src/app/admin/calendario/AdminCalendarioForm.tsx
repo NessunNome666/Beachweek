@@ -92,25 +92,26 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-800/50 transition-colors"
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xs text-slate-500 shrink-0">
-            {PHASE_LABEL[match.phase] ?? match.phase} R{match.round}
-          </span>
-          <span className="font-medium text-sm truncate">
-            {homeTeamName} <span className="text-slate-500">vs</span> {awayTeamName}
-          </span>
+        <div className="flex flex-col min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 shrink-0">
+              {PHASE_LABEL[match.phase] ?? match.phase} R{match.round}
+            </span>
+            {isPostponed && (
+              <span className="text-xs font-bold text-orange-400">RINVIATA</span>
+            )}
+          </div>
+          <span className="font-medium text-sm truncate">{homeTeamName}</span>
+          <span className="text-xs text-slate-400 truncate">vs {awayTeamName}</span>
         </div>
-        <div className="flex items-center gap-3 shrink-0 ml-3">
-          {isPostponed && (
-            <span className="text-xs font-bold text-orange-400">RINVIATA</span>
-          )}
-          <span className="text-xs text-slate-500">{match.court}</span>
+        <div className="flex flex-col items-end gap-0.5 shrink-0 ml-3">
           <span className="text-xs text-slate-600">
             {new Date(match.scheduled_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
             {' '}
             {new Date(match.scheduled_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
           </span>
-          {open ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+          {match.court && <span className="text-xs text-slate-500">{match.court}</span>}
+          {open ? <ChevronUp size={14} className="text-slate-500 mt-0.5" /> : <ChevronDown size={14} className="text-slate-500 mt-0.5" />}
         </div>
       </button>
 

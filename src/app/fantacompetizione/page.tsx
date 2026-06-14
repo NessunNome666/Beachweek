@@ -52,7 +52,9 @@ export default function FantaLandingPage() {
           {[
             { pts: '+3', label: 'Risultato esatto', desc: 'Hai indovinato esattamente 2-0, 2-1, 1-2, o 0-2' },
             { pts: '+1', label: 'Vincitore corretto', desc: 'Hai indovinato chi vince ma sbagliato il parziale dei set' },
-            { pts: '+5', label: 'Vincitore del torneo', desc: 'Hai indovinato la squadra campione di un torneo' },
+            { pts: '+5', label: '1° posto torneo', desc: 'Hai indovinato il campione del torneo' },
+            { pts: '+5', label: '2° posto torneo', desc: 'Hai indovinato il finalista perdente' },
+            { pts: '+5', label: '3° posto torneo', desc: 'Hai indovinato il vincitore della finale per il 3° posto' },
           ].map(({ pts, label, desc }) => (
             <div key={label} className="flex items-center gap-4">
               <span className="text-2xl font-bold text-amber-400 w-12 shrink-0">{pts}</span>
