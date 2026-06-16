@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Star, Menu, X, LogIn, LogOut, User, ShieldAlert, CalendarDays } from 'lucide-react'
+import { Star, Menu, X, LogIn, LogOut, User, ShieldAlert, CalendarDays, Shuffle } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -102,6 +102,13 @@ export default function Navbar() {
                     <ShieldAlert size={14} />
                     Risultati
                   </Link>
+                  <Link
+                    href="/admin/sorteggio"
+                    className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                  >
+                    <Shuffle size={14} />
+                    Sorteggio
+                  </Link>
                 </>
               )}
               <div className="flex items-center gap-2 text-slate-400 text-sm">
@@ -180,6 +187,14 @@ export default function Navbar() {
                   >
                     <ShieldAlert size={14} />
                     Risultati
+                  </Link>
+                  <Link
+                    href="/admin/sorteggio"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium py-3 border-b border-slate-800/50 text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <Shuffle size={14} />
+                    Sorteggio
                   </Link>
                 </>
               )}

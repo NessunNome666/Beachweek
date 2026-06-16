@@ -7,14 +7,11 @@ export const revalidate = 0
 const PHASE_LABEL: Record<string, string> = {
   ottavi: 'Ottavi di finale',
   quarti: 'Quarti di finale',
+  semifinale: 'Semifinali',
 }
 
-// Fase iniziale di ogni torneo: ama ha gli ottavi, pro e fv partono dai quarti
-const FIRST_ELIM_PHASE: Record<string, string> = {
-  'beach-volley-amatoriale': 'ottavi',
-  'beach-volley-pro': 'quarti',
-  'foot-volley-2v2': 'quarti',
-}
+// Ordine delle fasi per rilevamento dinamico della prima fase eliminatoria
+const PHASE_ORDER = ['ottavi', 'quarti', 'semifinale']
 
 export default async function SorteggioPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +30,7 @@ export default async function SorteggioPage() {
   const { data: matchesRaw } = await sb
     .from('matches')
     .select('id, tournament_id, phase, round, team_home_id, team_away_id, scheduled_at')
-    .in('phase', ['ottavi', 'quarti'])
+    .in('phase', ['ottavi', 'quarti', 'semifinale'])
     .order('scheduled_at')
 
   const tournaments = (tournamentsRaw ?? []) as { id: string; name: string; slug: string }[]
@@ -56,12 +53,12 @@ export default async function SorteggioPage() {
 
       <div className="space-y-10">
         {tournaments.map((t) => {
-          const firstPhase = FIRST_ELIM_PHASE[t.slug]
+          const allTournamentElimMatches = matches.filter((m) => m.tournament_id === t.id)
+          const phases = allTournamentElimMatches.map((m) => m.phase)
+          const firstPhase = PHASE_ORDER.find((p) => phases.includes(p))
           if (!firstPhase) return null
 
-          const tournamentMatches = matches.filter(
-            (m) => m.tournament_id === t.id && m.phase === firstPhase
-          )
+          const tournamentMatches = allTournamentElimMatches.filter((m) => m.phase === firstPhase)
           if (tournamentMatches.length === 0) return null
 
           const tournamentTeams = teams.filter((tm) => tm.tournament_id === t.id)
