@@ -11,6 +11,7 @@ import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 
 const PHASE_ORDER = ['girone', 'quarti', 'semifinale', 'terzo_posto', 'finale']
 const PHASE_LABEL: Record<string, string> = {
+  ottavi: 'Ottavi di finale',
   quarti: 'Quarti di finale',
   semifinale: 'Semifinali',
   terzo_posto: '3° Posto',

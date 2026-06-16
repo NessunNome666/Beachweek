@@ -1,7 +1,7 @@
 export type TournamentFormat = 'round_robin' | 'single_elim' | 'mixed'
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed'
 export type MatchStatus = 'scheduled' | 'in_progress' | 'completed' | 'postponed'
-export type MatchPhase = 'girone' | 'quarti' | 'semifinale' | 'finale' | 'terzo_posto'
+export type MatchPhase = 'girone' | 'ottavi' | 'quarti' | 'semifinale' | 'finale' | 'terzo_posto'
 
 export interface Database {
   public: {

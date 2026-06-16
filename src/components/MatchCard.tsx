@@ -23,6 +23,7 @@ interface Match {
 
 const PHASE_LABEL: Record<string, string> = {
   girone: 'Girone',
+  ottavi: 'Ottavi di finale',
   quarti: 'Quarti di finale',
   semifinale: 'Semifinale',
   finale: 'Finale',

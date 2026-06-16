@@ -24,6 +24,7 @@ interface Props {
 
 const PHASE_LABEL: Record<string, string> = {
   girone: 'Girone',
+  ottavi: 'Ottavi',
   quarti: 'Quarti',
   semifinale: 'Semifinale',
   finale: 'Finale',
