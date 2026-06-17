@@ -46,8 +46,8 @@ export default function MatchCard({
   const awayWon = isCompleted && match.score_home !== null && match.score_away !== null && match.score_away > match.score_home
 
   const scheduledDate = new Date(match.scheduled_at)
-  const dateStr = scheduledDate.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' })
-  const timeStr = scheduledDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+  const dateStr = scheduledDate.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Rome' })
+  const timeStr = scheduledDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })
 
   return (
     <div className={`bg-slate-900 border rounded-xl px-4 py-3 ${

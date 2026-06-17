@@ -64,7 +64,9 @@ export default async function PronosticiPage() {
       .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 
   // Solo partite ancora schedulabili: in_progress e completed non si possono pronosticare
-  const allPending = matches.filter((m) => m.status === 'scheduled')
+  // Esclude anche partite con orario già passato (anche se status non è ancora aggiornato)
+  const now = new Date()
+  const allPending = matches.filter((m) => m.status === 'scheduled' && new Date(m.scheduled_at) > now)
   const firstGameDate = matches.length > 0 ? toGameDate(matches[0].scheduled_at) : null
   const nextGameDay = allPending.length > 0 ? toGameDate(allPending[0].scheduled_at) : null
   const pendingMatches = nextGameDay
