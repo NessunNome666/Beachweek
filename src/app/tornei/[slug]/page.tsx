@@ -22,6 +22,7 @@ const SLUG_TO_TID: Record<string, 'ama' | 'pro' | 'fv'> = {
   'beach-volley-amatoriale': 'ama',
   'beach-volley-pro': 'pro',
   'foot-volley-2v2': 'fv',
+  'test-cup-2026': 'ama',
 }
 
 export default async function TorneoPage({ params }: { params: Promise<{ slug: string }> }) {
