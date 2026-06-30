@@ -17,6 +17,11 @@ interface Tournament { id: string; name: string; slug: string; predictions_locke
 interface PredictionMatch { match_id: string; predicted_home: number; predicted_away: number }
 interface PredictionWinner { tournament_id: string; placement: number; predicted_team_id: string }
 
+const PHASE_LABEL: Record<string, string> = {
+  ottavi: 'Ottavi', quarti: 'Quarti', semifinale: 'Semifinale',
+  finale: 'Finale', terzo_posto: '3° Posto',
+}
+
 export default async function PronosticiPage() {
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,10 +29,10 @@ export default async function PronosticiPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Tutte le fasi: anche l'eliminazione è pronosticabile una volta assegnate le squadre
   const { data: matchesRaw } = await sb
     .from('matches')
     .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away, scheduled_at')
-    .eq('phase', 'girone')
     .order('scheduled_at')
 
   const { data: teamsRaw } = await sb.from('teams').select('id, name, tournament_id')
@@ -55,22 +60,45 @@ export default async function PronosticiPage() {
     existingWinnerPredictions.map((p) => [`${p.tournament_id}-${p.placement}`, p.predicted_team_id])
   )
 
-  const completedMatches = matches.filter((m) => m.status === 'completed')
+  // Pronosticabile = entrambe le squadre assegnate (l'eliminazione lo diventa dopo il sorteggio)
+  const hasTeams = (m: Match) => !!m.team_home_id && !!m.team_away_id
 
+  // Confine giornata a 06:00 Roma — partite dopo mezzanotte appartengono al giorno precedente
   const toGameDate = (iso: string) =>
     new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
       .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 
-  const now = new Date()
-  const allPending = matches.filter((m) => m.status === 'scheduled' && new Date(m.scheduled_at) > now)
+  const completedMatches = matches.filter((m) => m.status === 'completed' && hasTeams(m))
+
+  // Giornata attiva = la prima giornata con almeno una partita pronosticabile non ancora conclusa.
+  // Resta visibile (anche con partite in corso) finché TUTTE le sue partite non sono completate.
+  const liveMatches = matches.filter((m) => hasTeams(m) && m.status !== 'completed')
   const firstGameDate = matches.length > 0 ? toGameDate(matches[0].scheduled_at) : null
-  const nextGameDay = allPending.length > 0 ? toGameDate(allPending[0].scheduled_at) : null
-  const pendingMatches = nextGameDay
-    ? allPending.filter((m) => toGameDate(m.scheduled_at) === nextGameDay)
+  const activeDay = liveMatches.length > 0 ? toGameDate(liveMatches[0].scheduled_at) : null
+  const activeDayMatches = activeDay
+    ? liveMatches.filter((m) => toGameDate(m.scheduled_at) === activeDay)
     : []
-  const nextDayIndex = firstGameDate && nextGameDay
-    ? Math.round((new Date(nextGameDay).getTime() - new Date(firstGameDate).getTime()) / 86400000) + 1
+  const activeDayIndex = firstGameDate && activeDay
+    ? Math.round((new Date(activeDay).getTime() - new Date(firstGameDate).getTime()) / 86400000) + 1
     : null
+
+  const now = Date.now()
+  const batchMatches = activeDayMatches.map((m) => ({
+    id: m.id,
+    homeTeamName: m.team_home_id ? (teamsMap[m.team_home_id] ?? 'Da definire') : 'Da definire',
+    awayTeamName: m.team_away_id ? (teamsMap[m.team_away_id] ?? 'Da definire') : 'Da definire',
+    // Congelata quando la partita è iniziata (cutoff = orario d'inizio) o è in corso/rinviata
+    locked: new Date(m.scheduled_at).getTime() <= now || m.status === 'in_progress',
+    postponed: m.status === 'postponed',
+    initialPrediction: predMap[m.id],
+    phaseLabel: m.phase !== 'girone' ? (PHASE_LABEL[m.phase] ?? m.phase) : undefined,
+  }))
+
+  // Lock podio automatico per torneo: tutti i gironi di quel torneo completati
+  const isPodioLocked = (t: Tournament) => {
+    const gm = matches.filter((m) => m.tournament_id === t.id && m.phase === 'girone')
+    return t.predictions_locked || (gm.length > 0 && gm.every((m) => m.status === 'completed'))
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -93,20 +121,15 @@ export default async function PronosticiPage() {
         </ResultsCollapse>
       )}
 
-      {pendingMatches.length > 0 ? (
+      {batchMatches.length > 0 ? (
         <section className="mb-12">
-          <h2 className="text-lg font-bold text-orange-400 mb-4">
-            {`Partite da pronosticare${nextDayIndex !== null ? ` - Giorno ${nextDayIndex}` : ''}`}
+          <h2 className="text-lg font-bold text-orange-400 mb-1">
+            {`Partite${activeDayIndex !== null ? ` - Giorno ${activeDayIndex}` : ''}`}
           </h2>
-          <PredictionsBatchForm
-            matches={pendingMatches.map((m) => ({
-              id: m.id,
-              homeTeamName: m.team_home_id ? (teamsMap[m.team_home_id] ?? 'Da definire') : 'Da definire',
-              awayTeamName: m.team_away_id ? (teamsMap[m.team_away_id] ?? 'Da definire') : 'Da definire',
-              matchStatus: m.status,
-              initialPrediction: predMap[m.id],
-            }))}
-          />
+          <p className="text-xs text-slate-500 mb-4">
+            Pronostica e modifica fino all&apos;orario d&apos;inizio. A partita iniziata il pronostico si blocca.
+          </p>
+          <PredictionsBatchForm matches={batchMatches} />
         </section>
       ) : completedMatches.length === 0 ? (
         <div className="text-center py-16 text-slate-500 mb-12">
@@ -119,24 +142,25 @@ export default async function PronosticiPage() {
           Pronostica il podio finale
         </h2>
         <p className="text-xs text-slate-500 mb-5">
-          5 pt per ogni piazzamento indovinato - si bloccano all&apos;inizio dell&apos;eliminazione
+          5 pt per ogni piazzamento indovinato - si bloccano automaticamente al termine dei gironi di ciascun torneo
         </p>
         <div className="space-y-6">
           {tournaments.map((t) => {
             const tournamentTeams = teams.filter((team) => team.tournament_id === t.id)
+            const locked = isPodioLocked(t)
             return (
               <div key={t.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-semibold">{t.name}</h3>
-                  {t.predictions_locked && (
+                  {locked && (
                     <span className="flex items-center gap-1 text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded-full">
                       <Lock size={10} />
                       Bloccato
                     </span>
                   )}
                 </div>
-                {t.predictions_locked ? (
-                  <p className="text-slate-500 text-sm">I pronostici per questo torneo sono chiusi.</p>
+                {locked ? (
+                  <p className="text-slate-500 text-sm">Gironi conclusi: i pronostici sul podio sono chiusi.</p>
                 ) : (
                   <div className="space-y-5">
                     {([1, 2, 3] as const).map((placement) => (
