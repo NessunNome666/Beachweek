@@ -223,8 +223,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
         </section>
       )}
 
-      {/* ── ACCOPPIAMENTI PRO (calcolati) ── */}
-      {tid === 'pro' && pairings.length > 0 && (
+      {/* ── ACCOPPIAMENTI PRO (proiezione, nascosta quando i quarti reali esistono) ── */}
+      {tid === 'pro' && pairings.length > 0 && !hasRealElimMatches && (
         <section className="mb-14">
           <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
             Quarti di finale
