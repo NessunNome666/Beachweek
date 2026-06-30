@@ -12,7 +12,7 @@ interface LeaderboardRow {
   correct_winner: number
 }
 
-const MEDALS = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰']
+const MEDALS = ['🥇', '🥈', '🥉']
 
 export default async function FantaClassificaPage() {
   const supabase = await createClient()

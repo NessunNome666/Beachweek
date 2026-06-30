@@ -9,7 +9,7 @@
           {[
             {
               title: 'Registrati',
-              desc: 'Crea un account con la tua email. Nessuna password necessaria â€” usiamo un link magico.',
+              desc: 'Crea un account con la tua email. Nessuna password necessaria — usiamo un link magico.',
             },
             {
               title: 'Fai i pronostici',
@@ -34,9 +34,9 @@
           {[
             { pts: '+3', label: 'Risultato esatto', desc: 'Hai indovinato esattamente 2-0, 2-1, 1-2, o 0-2' },
             { pts: '+1', label: 'Vincitore corretto', desc: 'Hai indovinato chi vince ma sbagliato il parziale' },
-            { pts: '+5', label: '1Â° posto torneo', desc: 'Hai indovinato il campione del torneo' },
-            { pts: '+5', label: '2Â° posto torneo', desc: 'Hai indovinato il 2Â° classificato del torneo' },
-            { pts: '+5', label: '3Â° posto torneo', desc: 'Hai indovinato il 3Â° classificato del torneo' },
+            { pts: '+5', label: '1° posto torneo', desc: 'Hai indovinato il campione del torneo' },
+            { pts: '+5', label: '2° posto torneo', desc: 'Hai indovinato il 2° classificato del torneo' },
+            { pts: '+5', label: '3° posto torneo', desc: 'Hai indovinato il 3° classificato del torneo' },
           ].map(({ pts, label, desc }) => (
             <div key={label} className="flex items-start gap-5">
               <span className="text-4xl font-bold text-orange-400 w-14 shrink-0">{pts}</span>
