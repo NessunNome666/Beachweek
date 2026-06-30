@@ -46,6 +46,7 @@ export default function MatchCard({
 
   const scheduledDate = new Date(match.scheduled_at)
   const timeStr = scheduledDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })
+  const dateStr = scheduledDate.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', timeZone: 'Europe/Rome' })
 
   return (
     <div className="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3">
@@ -99,7 +100,7 @@ export default function MatchCard({
       )}
 
       {!isCompleted && !isPostponed && (
-        <div className="mt-2 text-xs text-slate-500 text-center">{timeStr}</div>
+        <div className="mt-2 text-xs text-slate-500 text-center">{dateStr} &middot; {timeStr}</div>
       )}
 
       {match.notes && (
