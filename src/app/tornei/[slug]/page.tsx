@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import {
   getQualifiedAmatoriale, getPairingsPro, getQualifiedFootVolley, sortGroup,
@@ -9,7 +8,7 @@ import GironeTable from '@/components/GironeTable'
 import MatchCard from '@/components/MatchCard'
 import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 
-const PHASE_ORDER = ['girone', 'quarti', 'semifinale', 'terzo_posto', 'finale']
+const PHASE_ORDER = ['girone', 'ottavi', 'quarti', 'semifinale', 'terzo_posto', 'finale']
 const PHASE_LABEL: Record<string, string> = {
   ottavi: 'Ottavi di finale',
   quarti: 'Quarti di finale',
@@ -224,42 +223,12 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
         </section>
       )}
 
-      {/* ── SQUADRE QUALIFICATE ── */}
-      {(allQualifiedIds.length > 0 || allQualified) && (
-        <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
-            Squadre qualificate
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {allQualified
-              ? safeTeams.map((t) => (
-                  <span key={t.id} className="flex items-center gap-1.5 text-sm bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-1.5 rounded-full">
-                    <CheckCircle2 size={13} />
-                    {t.name}
-                  </span>
-                ))
-              : allQualifiedIds.map((id) => {
-                  const t = safeTeams.find((x) => x.id === id)
-                  return t ? (
-                    <span key={id} className="flex items-center gap-1.5 text-sm bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-1.5 rounded-full">
-                      <CheckCircle2 size={13} />
-                      {t.name}
-                    </span>
-                  ) : null
-                })}
-          </div>
-        </section>
-      )}
-
       {/* ── ACCOPPIAMENTI PRO (calcolati) ── */}
       {tid === 'pro' && pairings.length > 0 && (
         <section className="mb-14">
           <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
-            Quarti di finale — Accoppiamenti
+            Quarti di finale
           </h2>
-          <p className="text-slate-400 text-sm mb-4">
-            Accoppiamenti incrociati: 1°A vs 4°B, 2°A vs 3°B, 3°A vs 2°B, 4°A vs 1°B
-          </p>
           <div className="space-y-2 max-w-lg">
             {pairings.map(({ homeId, awayId }, i) => {
               const home = safeTeams.find((t) => t.id === homeId)
@@ -301,7 +270,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
             </div>
           ))}
         </section>
-      ) : tid === 'ama' ? (
+      ) : (tid === 'ama' || tid === 'fv') ? (
         <section className="mt-4">
           <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700 rounded-2xl px-6 py-5 max-w-lg">
             <div>
