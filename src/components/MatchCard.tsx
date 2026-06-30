@@ -41,8 +41,10 @@ export default function MatchCard({
   const isCompleted = match.status === 'completed'
   const isLive = match.status === 'in_progress'
   const isPostponed = match.status === 'postponed'
-  const homeWon = isCompleted && match.score_home !== null && match.score_away !== null && match.score_home > match.score_away
-  const awayWon = isCompleted && match.score_home !== null && match.score_away !== null && match.score_away > match.score_home
+  // "Disputata" = ha un risultato, a prescindere dallo status (lo status può restare 'scheduled' nel seed)
+  const hasResult = match.score_home !== null && match.score_away !== null
+  const homeWon = hasResult && match.score_home! > match.score_away!
+  const awayWon = hasResult && match.score_away! > match.score_home!
 
   const scheduledDate = new Date(match.scheduled_at)
   const timeStr = scheduledDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })
@@ -89,7 +91,7 @@ export default function MatchCard({
         </span>
       </div>
 
-      {isCompleted && match.score_detail && (
+      {hasResult && match.score_detail && (
         <div className="flex justify-center gap-4 mt-2">
           {match.score_detail.split(',').map((s, i) => (
             <span key={i} className="text-xs text-slate-500 font-mono">
@@ -99,7 +101,7 @@ export default function MatchCard({
         </div>
       )}
 
-      {!isCompleted && !isPostponed && (
+      {!hasResult && !isPostponed && (
         <div className="mt-2 text-xs text-slate-500 text-center">{dateStr} &middot; {timeStr}</div>
       )}
 
