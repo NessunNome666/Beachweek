@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Check, Loader2, AlertCircle, Lock, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VALID_VOLLEYBALL_SCORES } from '@/lib/scoring'
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function PredictionsBatchForm({ matches }: Props) {
+  const router = useRouter()
   // Le partite aperte partono pre-compilate col pronostico esistente, così si può modificare
   const [selections, setSelections] = useState<Record<string, string>>(() =>
     Object.fromEntries(
@@ -70,10 +72,12 @@ export default function PredictionsBatchForm({ matches }: Props) {
     setLoading(false)
     setSavedCount(saved)
     if (saved < entries.length) {
-      setError(`${entries.length - saved} pronostici non salvati. Riprova.`)
+      setError(`${entries.length - saved} pronostici non salvati: la partita potrebbe essere già iniziata. Ricarico…`)
     } else {
       setDone(true)
     }
+    // Riallinea lo stato col server (partite nel frattempo iniziate diventano congelate)
+    router.refresh()
   }
 
   if (matches.length === 0) return null
