@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import BracketSlotForm from './BracketSlotForm'
 
 export const revalidate = 0
@@ -40,7 +40,7 @@ export default async function SorteggioPage() {
   }[]
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-white mb-2">Sorteggi</h1>
       <p className="text-slate-400 mb-10 text-sm">
         Inserisci gli accoppiamenti del primo turno eliminatorio dopo il sorteggio dal vivo.
@@ -76,10 +76,10 @@ export default async function SorteggioPage() {
                         className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 flex items-center justify-between text-sm"
                       >
                         <span className="text-xs text-slate-500 w-12">Slot {i + 1}</span>
-                        <span className="flex-1 font-semibold">{homeTeam?.name ?? '—'}</span>
+                        <span className="flex-1 font-semibold">{homeTeam?.name ?? 'â€”'}</span>
                         <span className="text-slate-500 px-3 text-xs">vs</span>
-                        <span className="flex-1 font-semibold text-right">{awayTeam?.name ?? '—'}</span>
-                        <span className="ml-4 text-xs text-green-400 font-semibold">✓</span>
+                        <span className="flex-1 font-semibold text-right">{awayTeam?.name ?? 'â€”'}</span>
+                        <span className="ml-4 text-xs text-green-400 font-semibold">âœ“</span>
                       </div>
                     )
                   }
@@ -101,3 +101,4 @@ export default async function SorteggioPage() {
     </div>
   )
 }
+

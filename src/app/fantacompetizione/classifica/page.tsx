@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 
 export const revalidate = 0
 
@@ -12,7 +12,7 @@ interface LeaderboardRow {
   correct_winner: number
 }
 
-const MEDALS = ['🥇', '🥈', '🥉']
+const MEDALS = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰']
 
 export default async function FantaClassificaPage() {
   const supabase = await createClient()
@@ -21,8 +21,8 @@ export default async function FantaClassificaPage() {
   const sorted = (data ?? []) as LeaderboardRow[]
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-white mb-8">Classifica Fanta</h1>
+    <div className="max-w-2xl mx-auto px-4 py-5">
+      <h1 className="text-3xl font-bold text-white mb-4">Classifica Fanta</h1>
 
       <div className="flex flex-col gap-3">
         {sorted.map((row, i) => (
@@ -51,3 +51,4 @@ export default async function FantaClassificaPage() {
     </div>
   )
 }
+

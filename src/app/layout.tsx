@@ -26,6 +26,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it" className={`${geist.variable} h-full`}>
+      <head>
+        <link rel="preload" href="/HomescreenBG.png" as="image" />
+      </head>
       <body className="min-h-full flex flex-col text-white antialiased">
         <Navbar />
         <main className="flex-1">{children}</main>

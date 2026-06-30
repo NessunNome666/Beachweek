@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { TOURNAMENTS } from '@/lib/mock-data'
 
@@ -16,12 +16,12 @@ export default async function TorneiPage() {
   const { data } = await sb.from('tournaments').select('id, name, slug').order('name')
   const fromDb = (data ?? []) as { id: string; name: string; slug: string }[]
 
-  // Fallback ai dati mock finché il DB non è popolato
+  // Fallback ai dati mock finchÃ© il DB non Ã¨ popolato
   const tournaments = fromDb.length > 0 ? fromDb : TOURNAMENTS
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-white mb-8">I Tornei</h1>
+    <div className="max-w-2xl mx-auto px-4 py-5">
+      <h1 className="text-3xl font-bold text-white mb-4">I Tornei</h1>
 
       <div className="flex flex-col gap-4">
         {tournaments.map((t) => (
@@ -36,10 +36,11 @@ export default async function TorneiPage() {
             <p className="text-slate-300 text-sm mb-4">
               {DESCRIPTION[t.slug] ?? ''}
             </p>
-            <span className="text-slate-400 text-sm">Vai al torneo →</span>
+            <span className="text-slate-400 text-sm">Vai al torneo â†’</span>
           </Link>
         ))}
       </div>
     </div>
   )
 }
+

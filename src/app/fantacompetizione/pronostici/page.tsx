@@ -1,4 +1,4 @@
-import { Lock } from 'lucide-react'
+﻿import { Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import PredictionForm from './PredictionForm'
 import PredictionsBatchForm from './PredictionsBatchForm'
@@ -58,13 +58,13 @@ export default async function PronosticiPage() {
 
   const completedMatches = matches.filter((m) => m.status === 'completed')
 
-  // Confine giornata a 06:00 Roma — partite dopo mezzanotte appartengono al giorno precedente
+  // Confine giornata a 06:00 Roma â€” partite dopo mezzanotte appartengono al giorno precedente
   const toGameDate = (iso: string) =>
     new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
       .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 
   // Solo partite ancora schedulabili: in_progress e completed non si possono pronosticare
-  // Esclude anche partite con orario già passato (anche se status non è ancora aggiornato)
+  // Esclude anche partite con orario giÃ  passato (anche se status non Ã¨ ancora aggiornato)
   const now = new Date()
   const allPending = matches.filter((m) => m.status === 'scheduled' && new Date(m.scheduled_at) > now)
   const firstGameDate = matches.length > 0 ? toGameDate(matches[0].scheduled_at) : null
@@ -77,10 +77,10 @@ export default async function PronosticiPage() {
     : null
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-white mb-8">I miei pronostici</h1>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-4">I miei pronostici</h1>
 
-      {/* Completed matches — collapsible results */}
+      {/* Completed matches â€” collapsible results */}
       {completedMatches.length > 0 && (
         <ResultsCollapse count={completedMatches.length}>
           {completedMatches.map((match) => (
@@ -98,11 +98,11 @@ export default async function PronosticiPage() {
         </ResultsCollapse>
       )}
 
-      {/* Pending matches — batch form, solo il prossimo giorno di gioco */}
+      {/* Pending matches â€” batch form, solo il prossimo giorno di gioco */}
       {pendingMatches.length > 0 ? (
         <section className="mb-12">
           <h2 className="text-lg font-bold text-orange-400 mb-4">
-            Partite da pronosticare{nextDayIndex !== null ? ` — Giorno ${nextDayIndex}` : ''}
+            Partite da pronosticare{nextDayIndex !== null ? ` â€” Giorno ${nextDayIndex}` : ''}
           </h2>
           <PredictionsBatchForm
             matches={pendingMatches.map((m) => ({
@@ -125,7 +125,7 @@ export default async function PronosticiPage() {
         <h2 className="text-lg font-bold text-orange-400 mb-1">
           Pronostica il podio finale
         </h2>
-        <p className="text-xs text-slate-500 mb-5">5 pt per ogni piazzamento indovinato — si bloccano all&apos;inizio dell&apos;eliminazione</p>
+        <p className="text-xs text-slate-500 mb-5">5 pt per ogni piazzamento indovinato â€” si bloccano all&apos;inizio dell&apos;eliminazione</p>
         <div className="space-y-6">
           {tournaments.map((t) => {
             const tournamentTeams = teams.filter((team) => team.tournament_id === t.id)
@@ -163,3 +163,4 @@ export default async function PronosticiPage() {
     </div>
   )
 }
+

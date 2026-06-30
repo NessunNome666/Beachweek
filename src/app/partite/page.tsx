@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import MatchCard from '@/components/MatchCard'
 import DayAccordion from '@/components/DayAccordion'
 
@@ -23,7 +23,7 @@ interface Team { id: string; name: string }
 interface Tournament { id: string; name: string; slug: string }
 
 function toGameDate(iso: string): string {
-  // Confine giornata a 06:00 ora di Roma — partite dopo mezzanotte appartengono al giorno precedente
+  // Confine giornata a 06:00 ora di Roma â€” partite dopo mezzanotte appartengono al giorno precedente
   return new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
     .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
 }
@@ -61,15 +61,15 @@ export default async function PartitePage() {
 
   if (groups.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-slate-500">
+      <div className="max-w-3xl mx-auto px-4 py-8 text-center text-slate-500">
         <p>Nessuna partita in calendario al momento.</p>
       </div>
     )
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-white mb-8">Calendario partite</h1>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-4">Calendario partite</h1>
 
       <div className="space-y-10">
         {groups.map(({ dateKey, matches: dayMatches }) => {
@@ -122,3 +122,4 @@ export default async function PartitePage() {
     </div>
   )
 }
+

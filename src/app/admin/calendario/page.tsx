@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import AdminCalendarioForm from './AdminCalendarioForm'
 import DayAccordion from '@/components/DayAccordion'
 
@@ -35,7 +35,7 @@ export default async function AdminCalendarioPage() {
 
   if (!matches.length) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-5">
         <h1 className="text-2xl font-bold text-white mb-4">Gestione Calendario</h1>
         <p className="text-slate-400">Nessuna partita trovata. Esegui prima il seed dei match su Supabase.</p>
       </div>
@@ -57,7 +57,7 @@ export default async function AdminCalendarioPage() {
   const todayKey = toGameDate(new Date().toISOString())
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="max-w-4xl mx-auto px-4 py-5">
       <h1 className="text-2xl font-bold text-white mb-2">Gestione Calendario</h1>
       <p className="text-slate-400 mb-8 text-sm">
         Clicca su una partita per modificare data, orario, stato o aggiungere una nota. Le modifiche sono visibili subito.
@@ -102,3 +102,4 @@ export default async function AdminCalendarioPage() {
     </div>
   )
 }
+

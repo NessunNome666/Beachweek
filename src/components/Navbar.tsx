@@ -93,6 +93,7 @@ export default function Navbar() {
                 width={148}
                 height={38}
                 className="invert"
+                priority
               />
             </Link>
             <button

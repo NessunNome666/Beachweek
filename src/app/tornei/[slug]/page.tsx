@@ -135,7 +135,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   const sortedThirds = sortGroup(thirds)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
+    <div className="max-w-6xl mx-auto px-4 py-6">
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-white">{torneo.name}</h1>
       </div>
