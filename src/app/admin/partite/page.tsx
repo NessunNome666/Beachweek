@@ -1,4 +1,3 @@
-import { Shield } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import AdminMatchForm from './AdminMatchForm'
 import DayAccordion from '@/components/DayAccordion'
@@ -40,10 +39,7 @@ export default async function AdminPartitePage() {
   if (!matches.length) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-extrabold mb-4 flex items-center gap-3">
-          <Shield size={28} className="text-red-400" />
-          Inserimento risultati
-        </h1>
+        <h1 className="text-2xl font-bold text-white mb-4">Inserisci risultati</h1>
         <p className="text-slate-400">Nessuna partita trovata nel database. Esegui prima il seed dei dati.</p>
       </div>
     )
@@ -65,10 +61,7 @@ export default async function AdminPartitePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-extrabold mb-2 flex items-center gap-3">
-        <Shield size={28} className="text-red-400" />
-        Inserimento risultati
-      </h1>
+      <h1 className="text-2xl font-bold text-white mb-2">Inserisci risultati</h1>
       <p className="text-slate-400 mb-8 text-sm">
         Clicca su una partita, inserisci il punteggio e salva. Le classifiche si aggiornano automaticamente.
       </p>
@@ -100,7 +93,7 @@ export default async function AdminPartitePage() {
                   return (
                     <div key={match.id}>
                       {tournament && (
-                        <p className="text-xs text-slate-600 mb-1 ml-1">{tournament.name}</p>
+                        <p className="text-xs text-slate-500 mb-1 ml-1">{tournament.name}</p>
                       )}
                       <AdminMatchForm
                         match={match}

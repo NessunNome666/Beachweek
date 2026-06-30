@@ -1,4 +1,3 @@
-import { CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import AdminCalendarioForm from './AdminCalendarioForm'
 import DayAccordion from '@/components/DayAccordion'
@@ -37,10 +36,7 @@ export default async function AdminCalendarioPage() {
   if (!matches.length) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-extrabold mb-4 flex items-center gap-3">
-          <CalendarDays size={28} className="text-amber-400" />
-          Gestione Calendario
-        </h1>
+        <h1 className="text-2xl font-bold text-white mb-4">Gestione Calendario</h1>
         <p className="text-slate-400">Nessuna partita trovata. Esegui prima il seed dei match su Supabase.</p>
       </div>
     )
@@ -62,10 +58,7 @@ export default async function AdminCalendarioPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-extrabold mb-2 flex items-center gap-3">
-        <CalendarDays size={28} className="text-amber-400" />
-        Gestione Calendario
-      </h1>
+      <h1 className="text-2xl font-bold text-white mb-2">Gestione Calendario</h1>
       <p className="text-slate-400 mb-8 text-sm">
         Clicca su una partita per modificare data, orario, stato o aggiungere una nota. Le modifiche sono visibili subito.
       </p>
@@ -91,7 +84,7 @@ export default async function AdminCalendarioPage() {
                   return (
                     <div key={match.id}>
                       {tournament && (
-                        <p className="text-xs text-slate-600 mb-1 ml-1">{tournament.name}</p>
+                        <p className="text-xs text-slate-500 mb-1 ml-1">{tournament.name}</p>
                       )}
                       <AdminCalendarioForm
                         match={match}

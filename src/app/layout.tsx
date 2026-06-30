@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import InstallBanner from '@/components/InstallBanner'
+import FooterConditional from '@/components/FooterConditional'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
@@ -29,9 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-1">{children}</main>
         <InstallBanner />
-        <footer className="text-center text-xs text-slate-500 py-6 border-t border-orange-900/30">
-          © 2026 Phœbus Tito Volley — Tito Beach Week
-        </footer>
+        <FooterConditional />
       </body>
     </html>
   )

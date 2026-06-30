@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface Props {
   label?: string
@@ -12,15 +11,15 @@ export default function GroupMatchesAccordion({ label = 'Partite', children }: P
   const [open, setOpen] = useState(false)
 
   return (
-    <div>
+    <div className="mt-3">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors mb-1 font-medium uppercase tracking-wide"
+        className="w-full flex items-center justify-between bg-slate-800/40 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
       >
-        {label}
-        {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+        <span>{label}</span>
+        <span className="text-xs">{open ? '▲' : '▼'}</span>
       </button>
-      {open && <div className="space-y-2">{children}</div>}
+      {open && <div className="space-y-2 mt-2">{children}</div>}
     </div>
   )
 }

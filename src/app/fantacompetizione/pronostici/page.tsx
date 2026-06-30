@@ -1,4 +1,4 @@
-import { Star, Lock } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import PredictionForm from './PredictionForm'
 import PredictionsBatchForm from './PredictionsBatchForm'
@@ -78,11 +78,7 @@ export default async function PronosticiPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-3">
-        <Star className="text-amber-400" size={32} />
-        I miei pronostici
-      </h1>
-      <p className="text-slate-400 mb-10">Pronostica i risultati delle partite di girone e il podio finale dei tornei. Guadagni punti ad ogni indovinello.</p>
+      <h1 className="text-3xl font-bold text-white mb-8">I miei pronostici</h1>
 
       {/* Completed matches — collapsible results */}
       {completedMatches.length > 0 && (
@@ -105,7 +101,7 @@ export default async function PronosticiPage() {
       {/* Pending matches — batch form, solo il prossimo giorno di gioco */}
       {pendingMatches.length > 0 ? (
         <section className="mb-12">
-          <h2 className="text-lg font-bold mb-4">
+          <h2 className="text-lg font-bold text-orange-400 mb-4">
             Partite da pronosticare{nextDayIndex !== null ? ` — Giorno ${nextDayIndex}` : ''}
           </h2>
           <PredictionsBatchForm
@@ -120,14 +116,13 @@ export default async function PronosticiPage() {
         </section>
       ) : completedMatches.length === 0 ? (
         <div className="text-center py-16 text-slate-500 mb-12">
-          <Star size={48} className="mx-auto mb-4 opacity-30" />
           <p>Nessuna partita in programma al momento.</p>
         </div>
       ) : null}
 
       {/* Winner / placement predictions */}
       <section>
-        <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-orange-400 mb-1">
           Pronostica il podio finale
         </h2>
         <p className="text-xs text-slate-500 mb-5">5 pt per ogni piazzamento indovinato — si bloccano all&apos;inizio dell&apos;eliminazione</p>

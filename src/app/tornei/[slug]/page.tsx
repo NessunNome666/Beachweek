@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Trophy, Shuffle, CheckCircle2 } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import {
   getQualifiedAmatoriale, getPairingsPro, getQualifiedFootVolley, sortGroup,
@@ -136,18 +136,14 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="flex items-center gap-4 mb-10">
-        <Trophy size={36} className="text-amber-400 shrink-0" />
-        <div>
-          <h1 className="text-3xl font-extrabold">{torneo.name}</h1>
-          <p className="text-slate-400 mt-1">{torneo.description}</p>
-        </div>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-white">{torneo.name}</h1>
       </div>
 
       {/* ── FASE GIRONI ── */}
       {groups.length > 0 && (
         <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-6">
             Fase a Gironi
           </h2>
           <div className={`grid ${gridCols} gap-8`}>
@@ -160,7 +156,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
               })
               return (
                 <div key={group} className="space-y-3">
-                  <h3 className="font-bold text-lg">{group}</h3>
+                  <h3 className="font-bold text-lg text-orange-400">{group}</h3>
                   <GironeTable
                     standings={groupStandings}
                     qualifiedIds={allQualifiedIds}
@@ -186,7 +182,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       {/* ── MIGLIORI TERZE (solo Amatoriale) ── */}
       {tid === 'ama' && sortedThirds.length > 0 && (
         <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
             Classifica terze piazzate
           </h2>
           <p className="text-slate-400 text-sm mb-4">
@@ -211,7 +207,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                       {row.team_name}
                     </td>
                     <td className="px-3 py-3 text-center text-slate-400">{row.group_name}</td>
-                    <td className="px-3 py-3 text-center font-bold text-amber-400">{row.points}</td>
+                    <td className="px-3 py-3 text-center font-bold text-orange-400">{row.points}</td>
                     <td className="px-3 py-3 text-center text-slate-400">{row.sets_won}-{row.sets_lost}</td>
                     <td className="px-3 py-3 text-center">
                       {i < 2 ? (
@@ -231,7 +227,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       {/* ── SQUADRE QUALIFICATE ── */}
       {(allQualifiedIds.length > 0 || allQualified) && (
         <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
             Squadre qualificate
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -258,7 +254,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       {/* ── ACCOPPIAMENTI PRO (calcolati) ── */}
       {tid === 'pro' && pairings.length > 0 && (
         <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
             Quarti di finale — Accoppiamenti
           </h2>
           <p className="text-slate-400 text-sm mb-4">
@@ -284,7 +280,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       {/* ── FASE ELIMINAZIONE ── */}
       {elimPhases.length > 0 ? (
         <section>
-          <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-6">
             Fase a Eliminazione
           </h2>
           {elimPhases.map((phase) => (
@@ -307,10 +303,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
         </section>
       ) : tid === 'ama' ? (
         <section className="mt-4">
-          <div className="flex items-center gap-3 bg-slate-900 border border-amber-400/20 rounded-2xl px-6 py-5 max-w-lg">
-            <Shuffle size={24} className="text-amber-400 shrink-0" />
+          <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700 rounded-2xl px-6 py-5 max-w-lg">
             <div>
-              <p className="font-semibold">Sorteggio non ancora effettuato</p>
+              <p className="font-semibold text-white">Sorteggio non ancora effettuato</p>
               <p className="text-slate-400 text-sm mt-1">
                 Il tabellone finale verrà generato dopo il sorteggio dal vivo al termine dei gironi.
               </p>

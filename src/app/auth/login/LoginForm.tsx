@@ -58,8 +58,8 @@ export default function LoginForm({ next }: { next?: string }) {
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          placeholder="Come ti chiamano?"
-          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-amber-400 transition-colors"
+          placeholder="Nome Utente"
+          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
         />
       </div>
       <div>
@@ -72,15 +72,15 @@ export default function LoginForm({ next }: { next?: string }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          placeholder="la-tua@email.com"
-          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-amber-400 transition-colors"
+          placeholder="La tua email"
+          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
         />
       </div>
       {error && <p className="text-red-400 text-sm">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-amber-400 text-slate-900 font-bold py-3 rounded-full hover:bg-amber-300 disabled:opacity-50 transition-colors"
+        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-4 rounded-full hover:opacity-90 disabled:opacity-50 transition-opacity"
       >
         {loading ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} />}
         {loading ? 'Invio in corso…' : 'Invia link magico'}

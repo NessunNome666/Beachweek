@@ -1,4 +1,3 @@
-import { Shuffle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import BracketSlotForm from './BracketSlotForm'
 
@@ -42,11 +41,8 @@ export default async function SorteggioPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-3">
-        <Shuffle className="text-amber-400" size={32} />
-        Sorteggio
-      </h1>
-      <p className="text-slate-400 mb-10">
+      <h1 className="text-3xl font-bold text-white mb-2">Sorteggi</h1>
+      <p className="text-slate-400 mb-10 text-sm">
         Inserisci gli accoppiamenti del primo turno eliminatorio dopo il sorteggio dal vivo.
         I turni successivi si popolano automaticamente man mano che i risultati vengono inseriti.
       </p>
@@ -65,7 +61,7 @@ export default async function SorteggioPage() {
 
           return (
             <section key={t.id}>
-              <h2 className="text-lg font-bold mb-1">{t.name}</h2>
+              <h2 className="text-lg font-bold text-orange-400 mb-1">{t.name}</h2>
               <p className="text-xs text-slate-500 mb-4">{PHASE_LABEL[firstPhase]}</p>
               <div className="space-y-3">
                 {tournamentMatches.map((m, i) => {

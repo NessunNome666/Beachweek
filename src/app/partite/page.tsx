@@ -1,4 +1,3 @@
-import { CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import MatchCard from '@/components/MatchCard'
 import DayAccordion from '@/components/DayAccordion'
@@ -63,7 +62,6 @@ export default async function PartitePage() {
   if (groups.length === 0) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center text-slate-500">
-        <CalendarDays size={48} className="mx-auto mb-4 opacity-30" />
         <p>Nessuna partita in calendario al momento.</p>
       </div>
     )
@@ -71,11 +69,7 @@ export default async function PartitePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-3">
-        <CalendarDays className="text-orange-400" size={32} />
-        Calendario partite
-      </h1>
-      <p className="text-slate-400 mb-10">Tutte le partite dei tornei, in ordine cronologico.</p>
+      <h1 className="text-3xl font-bold text-white mb-8">Calendario partite</h1>
 
       <div className="space-y-10">
         {groups.map(({ dateKey, matches: dayMatches }) => {
@@ -110,7 +104,7 @@ export default async function PartitePage() {
                   return (
                     <div key={match.id}>
                       {tournament && (
-                        <p className="text-xs text-slate-600 mb-1 ml-1">{tournament.name}</p>
+                        <p className="text-xs text-slate-500 mb-1 ml-1">{tournament.name}</p>
                       )}
                       <MatchCard
                         match={match}
