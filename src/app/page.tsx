@@ -22,7 +22,7 @@ export default function Home() {
           </Link>
         </div>
         <p className="text-center text-xs text-white/50">
-          © 2026 Phœbus Tito Volley — Tito Beach Week
+          &copy; 2026 Phœbus Tito Volley &mdash; Tito Beach Week
         </p>
       </div>
     </div>

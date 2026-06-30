@@ -125,7 +125,7 @@ export default async function PronosticiPage() {
         <h2 className="text-lg font-bold text-orange-400 mb-1">
           Pronostica il podio finale
         </h2>
-        <p className=”text-xs text-slate-500 mb-5”>5 pt per ogni piazzamento indovinato — si bloccano all&apos;inizio dell&apos;eliminazione</p>
+        <p className=”text-xs text-slate-500 mb-5”>5 pt per ogni piazzamento indovinato &mdash; si bloccano all&apos;inizio dell&apos;eliminazione</p>
         <div className="space-y-6">
           {tournaments.map((t) => {
             const tournamentTeams = teams.filter((team) => team.tournament_id === t.id)
