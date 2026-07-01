@@ -155,7 +155,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
               })
               return (
                 <div key={group} className="space-y-3">
-                  <h3 className="font-bold text-lg text-orange-400">{group}</h3>
+                  <h3 className="font-bold text-lg text-slate-300">{group}</h3>
                   <GironeTable
                     standings={groupStandings}
                     qualifiedIds={allQualifiedIds}

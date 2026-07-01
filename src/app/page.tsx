@@ -3,7 +3,7 @@
 export default function Home() {
   return (
     <div
-      className="relative min-h-screen bg-[url('/HomescreenBG.png')] bg-cover bg-center flex flex-col"
+      className="relative min-h-dvh bg-[url('/HomescreenBG.png')] bg-cover bg-center flex flex-col"
     >
       <div className="flex-1" />
       <div className="px-5 pb-8">
