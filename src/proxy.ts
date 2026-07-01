@@ -31,6 +31,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/auth/login?next=${encodeURIComponent(path)}`, request.url))
   }
 
+  if (path.startsWith('/mvp') && !user) {
+    return NextResponse.redirect(new URL(`/auth/login?next=${encodeURIComponent(path)}`, request.url))
+  }
+
   if (path.startsWith('/admin')) {
     if (!user) {
       return NextResponse.redirect(new URL(`/auth/login?next=${encodeURIComponent(path)}`, request.url))
@@ -51,5 +55,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/fantacompetizione/pronostici', '/admin/:path*'],
+  matcher: ['/fantacompetizione/pronostici', '/mvp', '/admin/:path*'],
 }

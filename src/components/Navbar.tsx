@@ -13,6 +13,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [displayName, setDisplayName] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [mvpActive, setMvpActive] = useState(false)
 
   const isHome = pathname === '/'
 
@@ -25,6 +26,15 @@ export default function Navbar() {
       const { data } = await (supabase as any).from('users').select('is_admin').eq('id', userId).single()
       setIsAdmin(data?.is_admin ?? false)
     }
+
+    // Votazione MVP: link visibile se esiste almeno un torneo non 'hidden'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(supabase as any)
+      .from('tournaments')
+      .select('id')
+      .neq('mvp_status', 'hidden')
+      .limit(1)
+      .then(({ data }: { data: unknown[] | null }) => setMvpActive((data?.length ?? 0) > 0))
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) loadUser(session.user.id, session.user.user_metadata as Record<string, string>)
@@ -128,6 +138,15 @@ export default function Navbar() {
             >
               Classifica Fanta
             </Link>
+            {mvpActive && (
+              <Link
+                href="/mvp"
+                onClick={() => setOpen(false)}
+                className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+              >
+                Vota l&apos;MVP
+              </Link>
+            )}
             {isLoggedIn ? (
               <Link
                 href="/fantacompetizione/pronostici"
@@ -168,6 +187,13 @@ export default function Navbar() {
                   className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
                 >
                   Sorteggi
+                </Link>
+                <Link
+                  href="/admin/mvp"
+                  onClick={() => setOpen(false)}
+                  className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
+                >
+                  Votazione MVP
                 </Link>
               </>
             )}
