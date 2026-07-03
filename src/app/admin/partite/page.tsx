@@ -56,10 +56,7 @@ export default async function AdminPartitePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-2">Inserisci risultati</h1>
-      <p className="text-slate-400 mb-8 text-sm">
-        Clicca su una partita, inserisci il punteggio e salva. Le classifiche si aggiornano automaticamente.
-      </p>
+      <h1 className="text-2xl font-bold text-white mb-6">Inserisci risultati</h1>
 
       <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {

@@ -6,7 +6,8 @@
 
 /* Il font BeachWeek ha solo glifi maiuscoli: l'uppercase è obbligatorio
    per evitare il fallback su Geist a metà parola */
-h1 {
+h1,
+.font-heading {
   font-family: var(--font-beachweek);
   text-transform: uppercase;
   letter-spacing: 0.03em;

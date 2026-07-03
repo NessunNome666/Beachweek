@@ -54,10 +54,7 @@ export default async function AdminCalendarioPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-2">Gestione Calendario</h1>
-      <p className="text-slate-400 mb-8 text-sm">
-        Clicca su una partita per modificare data, orario, stato o aggiungere una nota. Le modifiche sono visibili subito.
-      </p>
+      <h1 className="text-2xl font-bold text-white mb-6">Gestione Calendario</h1>
 
       <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {

@@ -45,10 +45,11 @@ export default function MvpResults({ results, myVoteCandidateId, closed }: Props
           </div>
         )
       })}
-      <p className="text-center text-xs text-slate-500 pt-1">
-        {totalVotes} {totalVotes === 1 ? 'voto' : 'voti'} totali
-        {!closed && ' — la votazione è ancora aperta'}
-      </p>
+      {closed && (
+        <p className="text-center text-xs text-slate-500 pt-1">
+          {totalVotes} {totalVotes === 1 ? 'voto' : 'voti'} totali
+        </p>
+      )}
     </div>
   )
 }

@@ -65,7 +65,7 @@ export default async function PartitePage() {
     <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-white mb-4">Calendario partite</h1>
 
-      <div className="space-y-10">
+      <div className="space-y-6">
         {groups.map(({ dateKey, matches: dayMatches }) => {
           const dayIndex = dayNumber(dateKey, firstGameDate!)
           const isToday = dateKey === todayGameDate

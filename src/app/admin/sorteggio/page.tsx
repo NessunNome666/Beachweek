@@ -42,11 +42,7 @@ export default async function SorteggioPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-white mb-2">Sorteggi</h1>
-      <p className="text-slate-400 mb-10 text-sm">
-        Inserisci gli accoppiamenti del primo turno eliminatorio dopo il sorteggio dal vivo.
-        I turni successivi si popolano automaticamente man mano che i risultati vengono inseriti.
-      </p>
+      <h1 className="text-3xl font-bold text-white mb-8">Sorteggi</h1>
 
       <div className="space-y-10">
         {tournaments.map((t) => {

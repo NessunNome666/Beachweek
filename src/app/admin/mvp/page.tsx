@@ -24,11 +24,7 @@ export default async function AdminMvpPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-2">Votazione MVP</h1>
-      <p className="text-slate-400 mb-8 text-sm">
-        Scegli il torneo, inserisci i candidati e apri la votazione. Finché lo stato è
-        &laquo;Nascosta&raquo; nessuno vede la funzionalità.
-      </p>
+      <h1 className="text-2xl font-bold text-white mb-6">Votazione MVP</h1>
       <AdminMvpManager tournaments={tournaments} candidates={candidates} />
     </div>
   )

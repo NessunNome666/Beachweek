@@ -35,6 +35,6 @@ export const CORRECT_WINNER_POINTS = 1
 export const VALID_VOLLEYBALL_SCORES: [number, number][] = [
   [2, 0],
   [2, 1],
-  [0, 2],
   [1, 2],
+  [0, 2],
 ]
