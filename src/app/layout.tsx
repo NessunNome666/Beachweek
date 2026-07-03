@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import InstallBanner from '@/components/InstallBanner'
 import FooterConditional from '@/components/FooterConditional'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+
+const beachWeek = localFont({
+  src: './fonts/BeachWeek.woff2',
+  variable: '--font-beachweek',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Tito Beach Week 2026',
@@ -25,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${geist.variable} h-full`}>
+    <html lang="it" className={`${geist.variable} ${beachWeek.variable} h-full`}>
       <head>
         <link rel="preload" href="/HomescreenBG.png" as="image" />
       </head>
