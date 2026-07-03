@@ -52,7 +52,21 @@ export default function NotificationOptIn() {
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => reg.pushManager.getSubscription())
-      .then((sub) => setState(sub ? 'granted' : 'prompt'))
+      .then((sub) => {
+        if (sub) {
+          // Auto-riparazione: la subscription può esistere nel browser ma non
+          // essere salvata sul server (es. errore precedente). La ri-mandiamo
+          // (upsert idempotente) così lo stato "attivo" è sempre reale.
+          fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sub),
+          }).catch(() => {})
+          setState('granted')
+        } else {
+          setState('prompt')
+        }
+      })
       .catch(() => setState('prompt'))
   }, [])
 
