@@ -34,10 +34,9 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
   function loadResults(tournamentId: string) {
     if (!tournamentId) return
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(supabase as any)
+    supabase
       .rpc('get_mvp_results', { p_tournament_id: tournamentId })
-      .then(({ data }: { data: ResultRow[] | null }) => setResults(data ?? []))
+      .then(({ data }) => setResults(data ?? []))
   }
 
   useEffect(() => { loadResults(selectedId) }, [selectedId])
@@ -48,8 +47,7 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
     setLoading(true)
     setError('')
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('mvp_candidates')
       .insert({ tournament_id: selectedId, name: trimmed })
     setLoading(false)
@@ -61,8 +59,7 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
   async function removeCandidate(id: string) {
     setError('')
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any).from('mvp_candidates').delete().eq('id', id)
+    const { error: dbError } = await supabase.from('mvp_candidates').delete().eq('id', id)
     if (dbError) { setError('Errore nell’eliminazione. Riprova.'); return }
     router.refresh()
     loadResults(selectedId)
@@ -72,8 +69,7 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
     if (!selected || selected.mvp_status === status) return
     setError('')
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('tournaments')
       .update({ mvp_status: status })
       .eq('id', selectedId)

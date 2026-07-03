@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, AlertCircle, Lock, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { VALID_VOLLEYBALL_SCORES } from '@/lib/scoring'
+import ScoreButtons from '@/components/ScoreButtons'
 
 interface MatchItem {
   id: string
@@ -55,19 +55,20 @@ export default function PredictionsBatchForm({ matches }: Props) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('Non sei autenticato.'); setLoading(false); return }
 
-    let saved = 0
-    for (const [matchId, score] of entries) {
-      const [predictedHome, predictedAway] = score.split('-').map(Number)
-      // upsert: consente anche di modificare un pronostico già inserito
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: dbError } = await (supabase as any)
-        .from('predictions_match')
-        .upsert(
-          { user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway },
-          { onConflict: 'user_id,match_id' }
-        )
-      if (!dbError) saved++
-    }
+    // upsert in parallelo: consente di modificare pronostici già inseriti e mantiene il
+    // conteggio per-riga (una partita appena iniziata fallisce da sola, non blocca le altre)
+    const results = await Promise.all(
+      entries.map(([matchId, score]) => {
+        const [predictedHome, predictedAway] = score.split('-').map(Number)
+        return supabase
+          .from('predictions_match')
+          .upsert(
+            { user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway },
+            { onConflict: 'user_id,match_id' }
+          )
+      })
+    )
+    const saved = results.filter((r: { error: unknown }) => !r.error).length
 
     setLoading(false)
     setSavedCount(saved)
@@ -130,24 +131,12 @@ export default function PredictionsBatchForm({ matches }: Props) {
                 <span className="flex-1 truncate text-right">{match.awayTeamName}</span>
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                {VALID_VOLLEYBALL_SCORES.map(([h, a]) => {
-                  const key = `${h}-${a}`
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => select(match.id, key)}
-                      className={`py-2.5 rounded-lg text-sm font-mono font-bold transition-colors ${
-                        selected === key
-                          ? 'bg-amber-400 text-slate-900'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                      }`}
-                    >
-                      {h}-{a}
-                    </button>
-                  )
-                })}
-              </div>
+              <ScoreButtons
+                selected={selected}
+                onSelect={(key) => select(match.id, key)}
+                columns={4}
+                compact
+              />
             </div>
           )
         })}

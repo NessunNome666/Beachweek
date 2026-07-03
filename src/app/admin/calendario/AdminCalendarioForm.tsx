@@ -60,7 +60,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
     setError('')
 
     const supabase = createClient()
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('matches')
       .update({
         scheduled_at: fromLocalDatetimeInput(scheduledAt),

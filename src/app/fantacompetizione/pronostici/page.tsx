@@ -1,5 +1,6 @@
 import { Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { toGameDate, dayNumber } from '@/lib/game-date'
 import PredictionForm from './PredictionForm'
 import PredictionsBatchForm from './PredictionsBatchForm'
 import WinnerPredictionForm from './WinnerPredictionForm'
@@ -24,8 +25,7 @@ const PHASE_LABEL: Record<string, string> = {
 
 export default async function PronosticiPage() {
   const supabase = await createClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = supabase as any
+  const sb = supabase
 
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -63,11 +63,6 @@ export default async function PronosticiPage() {
   // Pronosticabile = entrambe le squadre assegnate (l'eliminazione lo diventa dopo il sorteggio)
   const hasTeams = (m: Match) => !!m.team_home_id && !!m.team_away_id
 
-  // Confine giornata a 06:00 Roma — partite dopo mezzanotte appartengono al giorno precedente
-  const toGameDate = (iso: string) =>
-    new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
-      .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
-
   const completedMatches = matches.filter((m) => m.status === 'completed' && hasTeams(m))
 
   // Giornata attiva = la prima giornata con almeno una partita pronosticabile non ancora conclusa.
@@ -79,9 +74,13 @@ export default async function PronosticiPage() {
     ? liveMatches.filter((m) => toGameDate(m.scheduled_at) === activeDay)
     : []
   const activeDayIndex = firstGameDate && activeDay
-    ? Math.round((new Date(activeDay).getTime() - new Date(firstGameDate).getTime()) / 86400000) + 1
+    ? dayNumber(activeDay, firstGameDate)
     : null
 
+  // Server Component reso per-richiesta (revalidate=0): l'orario corrente serve solo a
+  // marcare come "iniziate" le partite già cominciate (hint UI; il vero cutoff è nella RLS).
+  // Lettura legittima lato server, non una violazione di purezza React.
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now()
   const batchMatches = activeDayMatches.map((m) => ({
     id: m.id,

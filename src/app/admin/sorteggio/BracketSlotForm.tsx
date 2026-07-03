@@ -24,8 +24,7 @@ export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
     if (homeId === awayId) { setError('Le due squadre devono essere diverse.'); return }
     setLoading(true)
     setError('')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (createClient() as any)
+    const { error: dbError } = await createClient()
       .from('matches')
       .update({ team_home_id: homeId, team_away_id: awayId })
       .eq('id', matchId)

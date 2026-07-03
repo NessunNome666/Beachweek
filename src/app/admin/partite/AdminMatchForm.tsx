@@ -73,7 +73,7 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName }: Pr
     const scoreDetail = sets.map((s) => `${s.home}-${s.away}`).join(',')
     const supabase = createClient()
 
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('matches')
       .update({
         score_home: result.scoreHome,

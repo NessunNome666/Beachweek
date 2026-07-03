@@ -8,8 +8,7 @@ interface Candidate { id: string; name: string; tournament_id: string }
 
 export default async function AdminMvpPage() {
   const supabase = await createClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = supabase as any
+  const sb = supabase
 
   const { data: tournamentsRaw } = await sb
     .from('tournaments')

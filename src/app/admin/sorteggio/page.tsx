@@ -13,8 +13,7 @@ const PHASE_LABEL: Record<string, string> = {
 const PHASE_ORDER = ['ottavi', 'quarti', 'semifinale']
 
 export default async function SorteggioPage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = (await createClient()) as any
+  const sb = await createClient()
 
   const { data: tournamentsRaw } = await sb
     .from('tournaments')
@@ -38,6 +37,8 @@ export default async function SorteggioPage() {
     id: string; tournament_id: string; phase: string; round: number
     team_home_id: string | null; team_away_id: string | null; scheduled_at: string
   }[]
+
+  const teamsById = new Map(teams.map((t) => [t.id, t]))
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -65,8 +66,8 @@ export default async function SorteggioPage() {
               <p className="text-xs text-slate-500 mb-4">{PHASE_LABEL[firstPhase]}</p>
               <div className="space-y-3">
                 {tournamentMatches.map((m, i) => {
-                  const homeTeam = tournamentTeams.find((tm) => tm.id === m.team_home_id)
-                  const awayTeam = tournamentTeams.find((tm) => tm.id === m.team_away_id)
+                  const homeTeam = m.team_home_id ? teamsById.get(m.team_home_id) : undefined
+                  const awayTeam = m.team_away_id ? teamsById.get(m.team_away_id) : undefined
                   const isAssigned = !!m.team_home_id && !!m.team_away_id
 
                   if (isAssigned) {
@@ -79,7 +80,7 @@ export default async function SorteggioPage() {
                         <span className="flex-1 font-semibold">{homeTeam?.name ?? '—'}</span>
                         <span className="text-slate-500 px-3 text-xs">vs</span>
                         <span className="flex-1 font-semibold text-right">{awayTeam?.name ?? '—'}</span>
-                        <span className="ml-4 text-xs text-green-400 font-semibold">âœ“</span>
+                        <span className="ml-4 text-xs text-green-400 font-semibold">✓</span>
                       </div>
                     )
                   }

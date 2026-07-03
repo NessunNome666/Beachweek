@@ -11,7 +11,7 @@ interface Props {
   children: React.ReactNode
 }
 
-export default function DayAccordion({ dayLabel, badge, isToday, isPast, defaultOpen, children }: Props) {
+export default function DayAccordion({ dayLabel, badge, isPast, defaultOpen, children }: Props) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (

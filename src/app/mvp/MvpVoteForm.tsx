@@ -28,8 +28,7 @@ export default function MvpVoteForm({ tournamentId, candidates }: Props) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('Non sei autenticato.'); setLoading(false); return }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('mvp_votes')
       .insert({ user_id: user.id, candidate_id: selected, tournament_id: tournamentId })
 

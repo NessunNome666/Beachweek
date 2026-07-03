@@ -11,8 +11,7 @@ interface ResultRow { candidate_id: string; name: string; votes: number; pct: nu
 
 export default async function MvpPage() {
   const supabase = await createClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = supabase as any
+  const sb = supabase
 
   // Torneo attivo per MVP = quello non 'hidden' (il più recente se più d'uno)
   const { data: tournamentsRaw } = await sb

@@ -11,8 +11,7 @@ const DESCRIPTION: Record<string, string> = {
 }
 
 export default async function TorneiPage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = (await createClient()) as any
+  const sb = await createClient()
   const { data } = await sb.from('tournaments').select('id, name, slug').order('name')
   const fromDb = (data ?? []) as { id: string; name: string; slug: string }[]
 

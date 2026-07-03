@@ -1,4 +1,5 @@
 ﻿import { createClient } from '@/lib/supabase/server'
+import { toGameDate, dayNumber } from '@/lib/game-date'
 import MatchCard from '@/components/MatchCard'
 import DayAccordion from '@/components/DayAccordion'
 
@@ -22,15 +23,8 @@ interface Match {
 interface Team { id: string; name: string }
 interface Tournament { id: string; name: string; slug: string }
 
-function toGameDate(iso: string): string {
-  // Confine giornata a 06:00 ora di Roma â€” partite dopo mezzanotte appartengono al giorno precedente
-  return new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
-    .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
-}
-
 export default async function PartitePage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = (await createClient()) as any
+  const sb = await createClient()
 
   const { data: matchesRaw } = await sb
     .from('matches')
@@ -73,9 +67,7 @@ export default async function PartitePage() {
 
       <div className="space-y-10">
         {groups.map(({ dateKey, matches: dayMatches }) => {
-          const dayIndex = Math.round(
-            (new Date(dateKey).getTime() - new Date(firstGameDate!).getTime()) / 86400000
-          ) + 1
+          const dayIndex = dayNumber(dateKey, firstGameDate!)
           const isToday = dateKey === todayGameDate
           const isPast = dateKey < todayGameDate
 

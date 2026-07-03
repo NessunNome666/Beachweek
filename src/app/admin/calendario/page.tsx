@@ -1,4 +1,5 @@
 ﻿import { createClient } from '@/lib/supabase/server'
+import { toGameDate, dayNumber } from '@/lib/game-date'
 import AdminCalendarioForm from './AdminCalendarioForm'
 import DayAccordion from '@/components/DayAccordion'
 
@@ -12,14 +13,9 @@ interface Match {
 }
 interface Team { id: string; name: string }
 
-function toGameDate(iso: string): string {
-  return new Date(new Date(iso).getTime() - 6 * 60 * 60 * 1000)
-    .toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' })
-}
-
 export default async function AdminCalendarioPage() {
   const supabase = await createClient()
-  const sb = supabase as any
+  const sb = supabase
 
   const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug').order('created_at')
   const { data: matchesRaw } = await sb
@@ -65,9 +61,7 @@ export default async function AdminCalendarioPage() {
 
       <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {
-          const dayIndex = firstDate
-            ? Math.round((new Date(dateKey).getTime() - new Date(firstDate).getTime()) / 86400000) + 1
-            : 1
+          const dayIndex = firstDate ? dayNumber(dateKey, firstDate) : 1
           const isToday = dateKey === todayKey
           const isPast = dateKey < todayKey
           return (

@@ -22,19 +22,17 @@ export default function Navbar() {
 
     async function loadUser(userId: string, meta: Record<string, string>) {
       setDisplayName(meta?.display_name ?? meta?.email?.split('@')[0] ?? null)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await (supabase as any).from('users').select('is_admin').eq('id', userId).single()
+      const { data } = await supabase.from('users').select('is_admin').eq('id', userId).single()
       setIsAdmin(data?.is_admin ?? false)
     }
 
     // Votazione MVP: link visibile se esiste almeno un torneo non 'hidden'
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(supabase as any)
+    supabase
       .from('tournaments')
       .select('id')
       .neq('mvp_status', 'hidden')
       .limit(1)
-      .then(({ data }: { data: unknown[] | null }) => setMvpActive((data?.length ?? 0) > 0))
+      .then(({ data }) => setMvpActive((data?.length ?? 0) > 0))
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) loadUser(session.user.id, session.user.user_metadata as Record<string, string>)

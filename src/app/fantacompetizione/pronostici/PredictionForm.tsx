@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { Check, Loader2, AlertCircle, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { VALID_VOLLEYBALL_SCORES, calculateMatchPoints } from '@/lib/scoring'
+import { calculateMatchPoints } from '@/lib/scoring'
+import ScoreButtons from '@/components/ScoreButtons'
 
 interface Props {
   matchId: string
@@ -97,8 +98,7 @@ export default function PredictionForm({
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('Non sei autenticato.'); setLoading(false); return }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('predictions_match')
       .upsert(
         { user_id: user.id, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway },
@@ -129,24 +129,13 @@ export default function PredictionForm({
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-2 mb-4 mt-3">
-        {VALID_VOLLEYBALL_SCORES.map(([h, a]) => {
-          const key = `${h}-${a}`
-          return (
-            <button
-              key={key}
-              onClick={() => { setSelected(key); setSaved(false); setError('') }}
-              className={`py-3 rounded-lg text-sm font-mono font-bold transition-colors ${
-                selected === key
-                  ? 'bg-amber-400 text-slate-900'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-              }`}
-            >
-              {h} - {a}
-            </button>
-          )
-        })}
-      </div>
+      <ScoreButtons
+        selected={selected}
+        onSelect={(key) => { setSelected(key); setSaved(false); setError('') }}
+        columns={3}
+        spaced
+        className="mb-4 mt-3"
+      />
 
       {error && (
         <p className="flex items-center gap-1.5 text-red-400 text-xs mb-2">

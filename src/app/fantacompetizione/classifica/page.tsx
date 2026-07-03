@@ -16,8 +16,7 @@ const MEDALS = ['🥇', '🥈', '🥉']
 
 export default async function FantaClassificaPage() {
   const supabase = await createClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any).from('fanta_leaderboard').select('*')
+  const { data } = await supabase.from('fanta_leaderboard').select('*')
   const sorted = (data ?? []) as LeaderboardRow[]
 
   return (

@@ -40,8 +40,7 @@ export default function WinnerPredictionForm({ tournamentId, placement, teams, i
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('Non sei autenticato.'); setLoading(false); return }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: dbError } = await (supabase as any)
+    const { error: dbError } = await supabase
       .from('predictions_winner')
       .upsert(
         { user_id: user.id, tournament_id: tournamentId, placement, predicted_team_id: selectedTeamId },

@@ -32,7 +32,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   const supabase = await createClient()
 
   // Step 1: ottieni il torneo per slug
-  const { data: torneo } = await (supabase as any)
+  const { data: torneo } = await supabase
     .from('tournaments')
     .select('*')
     .eq('slug', slug)
@@ -46,19 +46,19 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     { data: matchesRaw },
     { data: standingsRaw },
   ] = await Promise.all([
-    (supabase as any)
+    supabase
       .from('teams')
       .select('*')
       .eq('tournament_id', torneo.id)
       .order('group_name')
       .order('name'),
-    (supabase as any)
+    supabase
       .from('matches')
       .select('*')
       .eq('tournament_id', torneo.id)
       .order('phase')
       .order('round'),
-    (supabase as any)
+    supabase
       .from('standings_view')
       .select('*')
       .eq('tournament_id', torneo.id),
@@ -69,6 +69,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     group_name: string | null; created_at: string
   }> = teamsRaw ?? []
 
+  const teamsById = new Map(safeTeams.map((t) => [t.id, t]))
+
   const safeMatches: Array<{
     id: string; tournament_id: string; phase: string; round: number
     team_home_id: string | null; team_away_id: string | null
@@ -77,11 +79,11 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   }> = matchesRaw ?? []
 
   // Mappa a StandingRow — il DB traccia solo set, non punti individuali
-  const standings: StandingRow[] = (standingsRaw ?? []).map((r: any) => ({
-    team_id: r.team_id,
-    team_name: r.team_name,
+  const standings: StandingRow[] = (standingsRaw ?? []).map((r) => ({
+    team_id: r.team_id ?? '',
+    team_name: r.team_name ?? '',
     group_name: r.group_name ?? '',
-    tournament_id: r.tournament_id,
+    tournament_id: r.tournament_id ?? '',
     matches_played: r.matches_played ?? 0,
     wins: r.wins ?? 0,
     losses: r.losses ?? 0,
@@ -149,8 +151,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
             {groups.map((group) => {
               const groupStandings = standings.filter((s) => s.group_name === group)
               const groupMatches = gironeMatches.filter((m) => {
-                const home = safeTeams.find((t) => t.id === m.team_home_id)
-                const away = safeTeams.find((t) => t.id === m.team_away_id)
+                const home = m.team_home_id ? teamsById.get(m.team_home_id) : undefined
+                const away = m.team_away_id ? teamsById.get(m.team_away_id) : undefined
                 return home?.group_name === group || away?.group_name === group
               })
               return (
@@ -165,9 +167,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                     {groupMatches.map((m) => (
                       <MatchCard
                         key={m.id}
-                        match={m as any}
-                        homeTeam={safeTeams.find((t) => t.id === m.team_home_id) as any}
-                        awayTeam={safeTeams.find((t) => t.id === m.team_away_id) as any}
+                        match={m}
+                        homeTeam={(m.team_home_id ? teamsById.get(m.team_home_id) : undefined)}
+                        awayTeam={(m.team_away_id ? teamsById.get(m.team_away_id) : undefined)}
                       />
                     ))}
                   </GroupMatchesAccordion>
@@ -231,8 +233,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
           </h2>
           <div className="space-y-2 max-w-lg">
             {pairings.map(({ homeId, awayId }, i) => {
-              const home = safeTeams.find((t) => t.id === homeId)
-              const away = safeTeams.find((t) => t.id === awayId)
+              const home = teamsById.get(homeId)
+              const away = teamsById.get(awayId)
               return (
                 <div key={i} className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-semibold">
                   <span className="text-slate-500 text-xs w-5">Q{i + 1}</span>
@@ -261,9 +263,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                   .map((m) => (
                     <MatchCard
                       key={m.id}
-                      match={m as any}
-                      homeTeam={safeTeams.find((t) => t.id === m.team_home_id) as any}
-                      awayTeam={safeTeams.find((t) => t.id === m.team_away_id) as any}
+                      match={m}
+                      homeTeam={(m.team_home_id ? teamsById.get(m.team_home_id) : undefined)}
+                      awayTeam={(m.team_away_id ? teamsById.get(m.team_away_id) : undefined)}
                     />
                   ))}
               </div>

@@ -23,16 +23,10 @@ export async function GET(request: NextRequest) {
     )
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        const newName = session.user.user_metadata?.display_name
-        if (newName) {
-          await (supabase as any)
-            .from('users')
-            .update({ display_name: newName })
-            .eq('id', session.user.id)
-        }
-      }
+      // Il display_name viene impostato una sola volta dal trigger `handle_new_user`
+      // al primo accesso. Non lo sincronizziamo a ogni login: non esiste policy UPDATE
+      // su `users` (per evitare escalation su is_admin) e il campo nome della LoginForm
+      // parte vuoto, quindi un re-login lo sovrascriverebbe col prefisso email.
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
