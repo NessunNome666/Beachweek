@@ -5,6 +5,7 @@ import PredictionForm from './PredictionForm'
 import PredictionsBatchForm from './PredictionsBatchForm'
 import WinnerPredictionForm from './WinnerPredictionForm'
 import ResultsCollapse from './ResultsCollapse'
+import NotificationOptIn from '@/components/NotificationOptIn'
 
 export const revalidate = 0
 
@@ -102,6 +103,8 @@ export default async function PronosticiPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-white mb-4">I miei pronostici</h1>
+
+      <NotificationOptIn />
 
       {completedMatches.length > 0 && (
         <ResultsCollapse count={completedMatches.length}>

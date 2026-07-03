@@ -74,6 +74,15 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
       .update({ mvp_status: status })
       .eq('id', selectedId)
     if (dbError) { setError('Errore nel cambio stato. Riprova.'); return }
+    // All'apertura, avvisa gli iscritti con una notifica push (best-effort:
+    // se qualcosa va storto non blocca il cambio stato)
+    if (status === 'open') {
+      fetch('/api/notify/mvp-open', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tournamentId: selectedId }),
+      }).catch(() => {})
+    }
     router.refresh()
   }
 
