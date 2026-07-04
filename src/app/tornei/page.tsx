@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { TOURNAMENTS } from '@/lib/mock-data'
 
 export const revalidate = 0
 
@@ -13,9 +12,7 @@ const DESCRIPTION: Record<string, string> = {
 export default async function TorneiPage() {
   const sb = await createClient()
   const { data } = await sb.from('tournaments').select('id, name, slug').order('name')
-  const fromDb = (data ?? []) as { id: string; name: string; slug: string }[]
-
-  const tournaments = fromDb.length > 0 ? fromDb : TOURNAMENTS
+  const tournaments = (data ?? []) as { id: string; name: string; slug: string }[]
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-5">

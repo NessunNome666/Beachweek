@@ -50,7 +50,9 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       .from('teams')
       .select('*')
       .eq('tournament_id', torneo.id)
-      .order('group_name')
+      // Ordine di inserimento = ordine ufficiale dei gironi sulla locandina
+      // (i nomi reali non sono alfabetici: BRASILE '10 finirebbe prima di BRASILE '90)
+      .order('created_at')
       .order('name'),
     supabase
       .from('matches')

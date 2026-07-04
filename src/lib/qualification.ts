@@ -62,8 +62,11 @@ export function getQualifiedAmatoriale(
 export function getPairingsPro(
   standings: StandingRow[]
 ): { homeId: string; awayId: string }[] {
-  const groupA = sortGroup(standings.filter((s) => s.group_name === 'Girone A'))
-  const groupB = sortGroup(standings.filter((s) => s.group_name === 'Girone B'))
+  // I due gironi hanno nomi reali (es. "DE GIORGI" / "VELASCO"): si ricavano
+  // dai dati. Quale sia "A" e quale "B" non cambia gli accoppiamenti, solo casa/ospite.
+  const groupNames = [...new Set(standings.map((s) => s.group_name))].sort()
+  const groupA = sortGroup(standings.filter((s) => s.group_name === groupNames[0]))
+  const groupB = sortGroup(standings.filter((s) => s.group_name === groupNames[1]))
 
   // 1°A vs 4°B, 2°A vs 3°B, 3°A vs 2°B, 4°A vs 1°B
   return [

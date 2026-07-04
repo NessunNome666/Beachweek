@@ -595,8 +595,7 @@ export const Constants = {
 } as const
 
 // ─────────────────────────────────────────────────────────────
-// Alias di compatibilità (retro-compat con il codice esistente,
-// es. src/lib/mock-data.ts che importa questi nomi)
+// Alias di compatibilità (retro-compat con il codice esistente)
 // ─────────────────────────────────────────────────────────────
 export type TournamentFormat = Database["public"]["Enums"]["tournament_format"]
 export type TournamentStatus = Database["public"]["Enums"]["tournament_status"]
