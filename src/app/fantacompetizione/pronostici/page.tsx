@@ -2,7 +2,7 @@ import { Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { toGameDate, dayNumber } from '@/lib/game-date'
 import PredictionForm from './PredictionForm'
-import PredictionsBatchForm from './PredictionsBatchForm'
+import PredictionsDeck from './PredictionsDeck'
 import WinnerPredictionForm from './WinnerPredictionForm'
 import ResultsCollapse from './ResultsCollapse'
 import NotificationOptIn from '@/components/NotificationOptIn'
@@ -92,6 +92,10 @@ export default async function PronosticiPage() {
     postponed: m.status === 'postponed',
     initialPrediction: predMap[m.id],
     phaseLabel: m.phase !== 'girone' ? (PHASE_LABEL[m.phase] ?? m.phase) : undefined,
+    // Formattato lato server: niente deriva di fuso/idratazione sul client
+    timeLabel: new Date(m.scheduled_at).toLocaleTimeString('it-IT', {
+      timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit',
+    }),
   }))
 
   // Lock podio automatico per torneo: tutti i gironi di quel torneo completati
@@ -131,7 +135,7 @@ export default async function PronosticiPage() {
           <p className="text-xs text-slate-500 mb-4">
             Pronostica e modifica fino all&apos;orario d&apos;inizio. A partita iniziata il pronostico si blocca.
           </p>
-          <PredictionsBatchForm matches={batchMatches} />
+          <PredictionsDeck matches={batchMatches} />
         </section>
       ) : completedMatches.length === 0 ? (
         <div className="text-center py-16 text-slate-500 mb-12">
