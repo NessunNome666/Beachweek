@@ -51,13 +51,14 @@ export default function LoginForm({ next }: { next?: string }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-2" htmlFor="name">
-          Nome visualizzato
+          Nome visualizzato <span className="text-red-400">*</span>
         </label>
         <input
           id="name"
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
+          required
           placeholder="Nome Utente"
           className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
         />

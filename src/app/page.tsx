@@ -1,6 +1,11 @@
 ﻿import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const fantaHref = user ? '/fantacompetizione/pronostici' : '/fantacompetizione'
+
   return (
     <div
       className="relative min-h-dvh bg-[url('/HomescreenBG.png')] bg-cover bg-center flex flex-col"
@@ -15,7 +20,7 @@ export default function Home() {
             Vedi i Tornei
           </Link>
           <Link
-            href="/fantacompetizione"
+            href={fantaHref}
             className="flex-1 text-center font-bold text-white py-4 rounded-full bg-gradient-to-r from-red-600 to-orange-400 hover:opacity-90 transition-opacity shadow-lg"
           >
             Gioca al Fanta

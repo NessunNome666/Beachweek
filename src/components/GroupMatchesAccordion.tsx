@@ -14,6 +14,7 @@ export default function GroupMatchesAccordion({ label = 'Partite', children }: P
     <div className="mt-3">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between bg-slate-800/40 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
       >
         <span>{label}</span>

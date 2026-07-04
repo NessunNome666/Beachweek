@@ -2,9 +2,10 @@
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next, error } = await searchParams
+  const title = next?.startsWith('/mvp') ? "Accedi per votare l'MVP" : 'Accedi al Fanta'
   return (
     <div className="max-w-2xl mx-auto px-4 py-5">
-      <h1 className="text-3xl font-bold text-white mb-3">Accedi al Fanta</h1>
+      <h1 className="text-3xl font-bold text-white mb-3">{title}</h1>
       <p className="text-slate-300 text-sm mb-8">
         Inserisci la tua email. Ti invieremo un link magico per accedere &mdash; nessuna password necessaria.
       </p>

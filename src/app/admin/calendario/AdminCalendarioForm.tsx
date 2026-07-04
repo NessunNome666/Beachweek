@@ -87,6 +87,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
       {/* Header — sempre visibile */}
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex flex-col min-w-0">

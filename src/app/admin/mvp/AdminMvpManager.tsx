@@ -56,7 +56,13 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
     router.refresh()
   }
 
-  async function removeCandidate(id: string) {
+  async function removeCandidate(id: string, name: string) {
+    const voteCount = votesById[id] ?? 0
+    if (voteCount > 0 && !window.confirm(
+      `"${name}" ha già ${voteCount} voti. Eliminandolo perderai anche quei voti. Confermi?`
+    )) {
+      return
+    }
     setError('')
     const supabase = createClient()
     const { error: dbError } = await supabase.from('mvp_candidates').delete().eq('id', id)
@@ -67,6 +73,17 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
 
   async function setStatus(status: string) {
     if (!selected || selected.mvp_status === status) return
+    const from = selected.mvp_status
+    if (from === 'closed' && status === 'open' && !window.confirm(
+      'Stai riaprendo una votazione già chiusa e pubblicata. Confermi?'
+    )) {
+      return
+    }
+    if (from === 'hidden' && status === 'closed' && !window.confirm(
+      'Stai pubblicando i risultati senza aver mai aperto la votazione (0 voti raccolti). Confermi?'
+    )) {
+      return
+    }
     setError('')
     const supabase = createClient()
     const { error: dbError } = await supabase
@@ -176,8 +193,8 @@ export default function AdminMvpManager({ tournaments, candidates }: Props) {
                 {votesById[c.id] ?? 0} voti
               </span>
               <button
-                onClick={() => removeCandidate(c.id)}
-                className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                onClick={() => removeCandidate(c.id, c.name)}
+                className="text-slate-500 hover:text-red-400 transition-colors p-2"
                 aria-label="Rimuovi candidato"
               >
                 <Trash2 size={16} />

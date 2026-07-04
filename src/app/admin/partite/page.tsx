@@ -43,6 +43,10 @@ export default async function AdminPartitePage() {
   const teamsMap = Object.fromEntries(teams.map((t) => [t.id, t.name]))
   const tournamentsMap = Object.fromEntries(tournaments.map((t) => [t.id, t]))
 
+  // Un solo campo, partite in sequenza: "in corso ora" = la prima non ancora completata
+  // in ordine cronologico (i match sono già ordinati per scheduled_at sopra).
+  const nextMatchId = matches.find((m) => m.status !== 'completed')?.id ?? null
+
   // Raggruppa per giornata (stesso criterio di /partite)
   const grouped = new Map<string, Match[]>()
   for (const m of matches) {
@@ -89,6 +93,7 @@ export default async function AdminPartitePage() {
                         match={match}
                         homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
                         awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
+                        isNext={match.id === nextMatchId}
                       />
                     </div>
                   )

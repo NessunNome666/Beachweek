@@ -21,7 +21,7 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
     if (position === 2) {
       return (
         <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-700 text-slate-400 border border-slate-600">
-          ?
+          —
         </span>
       )
     }

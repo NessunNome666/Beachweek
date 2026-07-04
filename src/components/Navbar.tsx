@@ -16,6 +16,16 @@ export default function Navbar() {
   const [mvpActive, setMvpActive] = useState(false)
 
   const isHome = pathname === '/'
+  // Match esatto per tutte le voci, tranne "/tornei" che ha sotto-pagine dinamiche (/tornei/[slug])
+  const isActive = (href: string) => pathname === href || (href === '/tornei' && pathname.startsWith('/tornei/'))
+  const navLinkClass = (href: string) =>
+    `text-base py-4 border-t border-slate-700/60 transition-colors ${
+      isActive(href) ? 'text-orange-400 font-semibold' : 'text-white hover:text-orange-400'
+    }`
+  const adminLinkClass = (href: string) =>
+    `text-base py-4 border-t border-slate-700/60 transition-colors ${
+      isActive(href) ? 'text-orange-300 font-semibold' : 'text-orange-400 hover:text-orange-300'
+    }`
 
   useEffect(() => {
     const supabase = createClient()
@@ -81,7 +91,7 @@ export default function Navbar() {
           </Link>
           <button
             onClick={() => setOpen(true)}
-            className="text-white p-1"
+            className="text-white p-2"
             aria-label="Apri menu"
           >
             <Menu size={28} />
@@ -106,7 +116,7 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setOpen(false)}
-              className="text-white p-1"
+              className="text-white p-2"
               aria-label="Chiudi menu"
             >
               <X size={28} />
@@ -118,21 +128,21 @@ export default function Navbar() {
             <Link
               href="/tornei"
               onClick={() => setOpen(false)}
-              className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+              className={navLinkClass('/tornei')}
             >
               Vedi i tornei
             </Link>
             <Link
               href="/partite"
               onClick={() => setOpen(false)}
-              className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+              className={navLinkClass('/partite')}
             >
               Calendario partite
             </Link>
             <Link
               href="/fantacompetizione/classifica"
               onClick={() => setOpen(false)}
-              className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+              className={navLinkClass('/fantacompetizione/classifica')}
             >
               Classifica Fanta
             </Link>
@@ -140,7 +150,7 @@ export default function Navbar() {
               <Link
                 href="/mvp"
                 onClick={() => setOpen(false)}
-                className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+                className={navLinkClass('/mvp')}
               >
                 Vota l&apos;MVP
               </Link>
@@ -149,7 +159,7 @@ export default function Navbar() {
               <Link
                 href="/fantacompetizione/pronostici"
                 onClick={() => setOpen(false)}
-                className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+                className={navLinkClass('/fantacompetizione/pronostici')}
               >
                 I miei pronostici
               </Link>
@@ -157,7 +167,7 @@ export default function Navbar() {
               <Link
                 href="/fantacompetizione"
                 onClick={() => setOpen(false)}
-                className="text-white text-base py-4 border-t border-slate-700/60 hover:text-orange-400 transition-colors"
+                className={navLinkClass('/fantacompetizione')}
               >
                 Regolamento Fanta
               </Link>
@@ -168,28 +178,28 @@ export default function Navbar() {
                 <Link
                   href="/admin/calendario"
                   onClick={() => setOpen(false)}
-                  className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
+                  className={adminLinkClass('/admin/calendario')}
                 >
                   Modifica calendario
                 </Link>
                 <Link
                   href="/admin/partite"
                   onClick={() => setOpen(false)}
-                  className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
+                  className={adminLinkClass('/admin/partite')}
                 >
                   Inserisci risultati
                 </Link>
                 <Link
                   href="/admin/sorteggio"
                   onClick={() => setOpen(false)}
-                  className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
+                  className={adminLinkClass('/admin/sorteggio')}
                 >
                   Sorteggi
                 </Link>
                 <Link
                   href="/admin/mvp"
                   onClick={() => setOpen(false)}
-                  className="text-orange-400 text-base py-4 border-t border-slate-700/60 hover:text-orange-300 transition-colors"
+                  className={adminLinkClass('/admin/mvp')}
                 >
                   Votazione MVP
                 </Link>

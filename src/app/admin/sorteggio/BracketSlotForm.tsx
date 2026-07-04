@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Loader2, AlertCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Check, Loader2, AlertCircle, Pencil } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Team { id: string; name: string }
@@ -10,13 +11,20 @@ interface Props {
   matchId: string
   slotLabel: string
   teams: Team[]
+  initialHomeId?: string | null
+  initialAwayId?: string | null
+  excludeIds?: string[]
+  teamLabels?: Record<string, string>
 }
 
-export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
-  const [homeId, setHomeId] = useState('')
-  const [awayId, setAwayId] = useState('')
+export default function BracketSlotForm({
+  matchId, slotLabel, teams, initialHomeId, initialAwayId, excludeIds = [], teamLabels = {},
+}: Props) {
+  const router = useRouter()
+  const [homeId, setHomeId] = useState(initialHomeId ?? '')
+  const [awayId, setAwayId] = useState(initialAwayId ?? '')
   const [loading, setLoading] = useState(false)
-  const [done, setDone] = useState(false)
+  const [done, setDone] = useState(!!(initialHomeId && initialAwayId))
   const [error, setError] = useState('')
 
   async function handleSave() {
@@ -33,6 +41,7 @@ export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
       setError('Errore nel salvataggio. Riprova.')
     } else {
       setDone(true)
+      router.refresh()
     }
   }
 
@@ -45,7 +54,13 @@ export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
         <span className="flex-1 font-semibold">{home?.name}</span>
         <span className="text-slate-500 px-3 text-xs">vs</span>
         <span className="flex-1 font-semibold text-right">{away?.name}</span>
-        <span className="ml-4 text-xs text-green-400 font-semibold">✓</span>
+        <button
+          onClick={() => setDone(false)}
+          className="ml-4 flex items-center gap-1 text-xs text-slate-500 hover:text-orange-400 transition-colors"
+          aria-label="Modifica accoppiamento"
+        >
+          <Pencil size={12} /> Modifica
+        </button>
       </div>
     )
   }
@@ -61,7 +76,9 @@ export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
         >
           <option value="">— Casa —</option>
           {teams.map((t) => (
-            <option key={t.id} value={t.id} disabled={t.id === awayId}>{t.name}</option>
+            <option key={t.id} value={t.id} disabled={t.id === awayId || excludeIds.includes(t.id)}>
+              {t.name}{teamLabels[t.id] ? ` — ${teamLabels[t.id]}` : ''}
+            </option>
           ))}
         </select>
         <span className="text-slate-600 text-xs px-1">vs</span>
@@ -72,7 +89,9 @@ export default function BracketSlotForm({ matchId, slotLabel, teams }: Props) {
         >
           <option value="">— Ospite —</option>
           {teams.map((t) => (
-            <option key={t.id} value={t.id} disabled={t.id === homeId}>{t.name}</option>
+            <option key={t.id} value={t.id} disabled={t.id === homeId || excludeIds.includes(t.id)}>
+              {t.name}{teamLabels[t.id] ? ` — ${teamLabels[t.id]}` : ''}
+            </option>
           ))}
         </select>
       </div>

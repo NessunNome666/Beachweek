@@ -10,6 +10,7 @@ export default function ResultsCollapse({ count, children }: { count: number; ch
     <section className="mb-10">
       <button
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         className="flex items-center justify-between w-full text-left mb-4 group"
       >
         <h2 className="text-lg font-bold text-slate-300">Risultati pronostici ({count})</h2>

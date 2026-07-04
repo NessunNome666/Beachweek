@@ -1,4 +1,37 @@
-﻿export default function FantaLandingPage() {
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import NotificationOptIn from '@/components/NotificationOptIn'
+
+export default async function FantaLandingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const stepBefore: { title: string; desc: string; href?: string }[] = [
+    {
+      title: 'Registrati',
+      desc: 'Crea un account con la tua email. Nessuna password necessaria — usiamo un link magico.',
+      href: user ? undefined : '/auth/login',
+    },
+  ]
+  const stepsAfter: { title: string; desc: string; href?: string }[] = [
+    {
+      title: 'Fai i pronostici',
+      desc: "Inserisci i risultati che prevedi prima dell'inizio di ogni partita. Pronostica il podio prima della fine dei gironi.",
+      href: '/fantacompetizione/pronostici',
+    },
+    {
+      title: 'Accumula punti',
+      desc: 'Guadagni punti per ogni pronostico corretto. Il primo in classifica vince il premio!',
+      href: '/fantacompetizione/classifica',
+    },
+  ]
+  const stepCard = (title: string, desc: string) => (
+    <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-5 hover:border-orange-400/60 transition-colors">
+      <h3 className="font-bold text-white mb-1">{title}</h3>
+      <p className="text-slate-300 text-sm">{desc}</p>
+    </div>
+  )
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-5">
       <h1 className="text-3xl font-bold text-white mb-4">Fanta</h1>
@@ -6,25 +39,23 @@
       <section className="mb-10">
         <h2 className="text-lg font-bold text-orange-400 mb-4">Come funziona</h2>
         <div className="flex flex-col gap-3">
-          {[
-            {
-              title: 'Registrati',
-              desc: 'Crea un account con la tua email. Nessuna password necessaria — usiamo un link magico.',
-            },
-            {
-              title: 'Fai i pronostici',
-              desc: "Inserisci i risultati che prevedi prima dell'inizio di ogni partita. Pronostica il podio prima della fine dei gironi.",
-            },
-            {
-              title: 'Accumula punti',
-              desc: 'Guadagni punti per ogni pronostico corretto. Il primo in classifica vince il premio!',
-            },
-          ].map(({ title, desc }) => (
-            <div key={title} className="bg-slate-800/60 border border-slate-700 rounded-xl p-5">
-              <h3 className="font-bold text-white mb-1">{title}</h3>
-              <p className="text-slate-300 text-sm">{desc}</p>
-            </div>
-          ))}
+          {stepBefore.map(({ title, desc, href }) =>
+            href
+              ? <Link key={title} href={href}>{stepCard(title, desc)}</Link>
+              : <div key={title}>{stepCard(title, desc)}</div>
+          )}
+          {user ? (
+            <NotificationOptIn />
+          ) : (
+            <Link href="/auth/login">
+              {stepCard('Attiva i promemoria', 'Un avviso per ricordarti i pronostici e le novità del torneo.')}
+            </Link>
+          )}
+          {stepsAfter.map(({ title, desc, href }) =>
+            href
+              ? <Link key={title} href={href}>{stepCard(title, desc)}</Link>
+              : <div key={title}>{stepCard(title, desc)}</div>
+          )}
         </div>
       </section>
 
@@ -51,4 +82,3 @@
     </div>
   )
 }
-

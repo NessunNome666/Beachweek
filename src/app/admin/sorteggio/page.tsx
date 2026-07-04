@@ -1,4 +1,6 @@
-﻿import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
+import { sortGroup } from '@/lib/qualification'
+import type { StandingRow } from '@/lib/qualification'
 import BracketSlotForm from './BracketSlotForm'
 
 export const revalidate = 0
@@ -22,7 +24,7 @@ export default async function SorteggioPage() {
 
   const { data: teamsRaw } = await sb
     .from('teams')
-    .select('id, name, tournament_id')
+    .select('id, name, tournament_id, group_name')
     .order('name')
 
   const { data: matchesRaw } = await sb
@@ -31,14 +33,41 @@ export default async function SorteggioPage() {
     .in('phase', ['ottavi', 'quarti', 'semifinale'])
     .order('scheduled_at')
 
+  const { data: standingsRaw } = await sb.from('standings_view').select('*')
+
   const tournaments = (tournamentsRaw ?? []) as { id: string; name: string; slug: string }[]
-  const teams = (teamsRaw ?? []) as { id: string; name: string; tournament_id: string }[]
+  const teams = (teamsRaw ?? []) as { id: string; name: string; tournament_id: string; group_name: string | null }[]
   const matches = (matchesRaw ?? []) as {
     id: string; tournament_id: string; phase: string; round: number
     team_home_id: string | null; team_away_id: string | null; scheduled_at: string
   }[]
 
-  const teamsById = new Map(teams.map((t) => [t.id, t]))
+  const standings: StandingRow[] = (standingsRaw ?? []).map((r) => ({
+    team_id: r.team_id ?? '',
+    team_name: r.team_name ?? '',
+    group_name: r.group_name ?? '',
+    tournament_id: r.tournament_id ?? '',
+    matches_played: r.matches_played ?? 0,
+    wins: r.wins ?? 0,
+    losses: r.losses ?? 0,
+    sets_won: r.sets_won ?? 0,
+    sets_lost: r.sets_lost ?? 0,
+    points_scored: r.points_scored ?? 0,
+    points_conceded: r.points_conceded ?? 0,
+    points: r.points ?? 0,
+  }))
+
+  // Etichetta "Girone A · 1°" per ogni squadra, per dare contesto di qualificazione nel dropdown
+  const teamLabels: Record<string, string> = {}
+  for (const t of tournaments) {
+    const tGroups = [...new Set(
+      teams.filter((tm) => tm.tournament_id === t.id).map((tm) => tm.group_name).filter(Boolean)
+    )] as string[]
+    for (const g of tGroups) {
+      const sorted = sortGroup(standings.filter((s) => s.tournament_id === t.id && s.group_name === g))
+      sorted.forEach((row, i) => { teamLabels[row.team_id] = `${g} · ${i + 1}°` })
+    }
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -56,37 +85,30 @@ export default async function SorteggioPage() {
 
           const tournamentTeams = teams.filter((tm) => tm.tournament_id === t.id)
 
+          // Squadre già assegnate a un altro slot della stessa fase — da escludere per evitare doppioni
+          const usedTeamIds = new Set(
+            tournamentMatches.flatMap((m) => [m.team_home_id, m.team_away_id]).filter(Boolean) as string[]
+          )
+
           return (
             <section key={t.id}>
               <h2 className="text-lg font-bold text-orange-400 mb-1">{t.name}</h2>
               <p className="text-xs text-slate-500 mb-4">{PHASE_LABEL[firstPhase]}</p>
               <div className="space-y-3">
                 {tournamentMatches.map((m, i) => {
-                  const homeTeam = m.team_home_id ? teamsById.get(m.team_home_id) : undefined
-                  const awayTeam = m.team_away_id ? teamsById.get(m.team_away_id) : undefined
-                  const isAssigned = !!m.team_home_id && !!m.team_away_id
-
-                  if (isAssigned) {
-                    return (
-                      <div
-                        key={m.id}
-                        className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 flex items-center justify-between text-sm"
-                      >
-                        <span className="text-xs text-slate-500 w-12">Slot {i + 1}</span>
-                        <span className="flex-1 font-semibold">{homeTeam?.name ?? '—'}</span>
-                        <span className="text-slate-500 px-3 text-xs">vs</span>
-                        <span className="flex-1 font-semibold text-right">{awayTeam?.name ?? '—'}</span>
-                        <span className="ml-4 text-xs text-green-400 font-semibold">✓</span>
-                      </div>
-                    )
-                  }
-
+                  const excludeIds = [...usedTeamIds].filter(
+                    (id) => id !== m.team_home_id && id !== m.team_away_id
+                  )
                   return (
                     <BracketSlotForm
                       key={m.id}
                       matchId={m.id}
                       slotLabel={`Slot ${i + 1}`}
                       teams={tournamentTeams}
+                      initialHomeId={m.team_home_id}
+                      initialAwayId={m.team_away_id}
+                      excludeIds={excludeIds}
+                      teamLabels={teamLabels}
                     />
                   )
                 })}
@@ -98,4 +120,3 @@ export default async function SorteggioPage() {
     </div>
   )
 }
-
