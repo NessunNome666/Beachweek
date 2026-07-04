@@ -56,23 +56,28 @@ BEGIN
       (tid, 'girone', 3, t2, t3, r3 + toff, 'scheduled', c2);
   END LOOP;
 
-  -- Quarti di finale — 8 partite (squadre TBD dopo gironi)
+  -- Ottavi di finale — 8 partite, 16 squadre (squadre TBD dopo gironi)
   INSERT INTO matches (tournament_id, phase, round, scheduled_at, status, court) VALUES
-    (tid, 'quarti', 1, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 1'),
-    (tid, 'quarti', 2, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 2'),
-    (tid, 'quarti', 3, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 3'),
-    (tid, 'quarti', 4, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 4'),
-    (tid, 'quarti', 5, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 1'),
-    (tid, 'quarti', 6, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 2'),
-    (tid, 'quarti', 7, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 3'),
-    (tid, 'quarti', 8, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 4');
+    (tid, 'ottavi', 1, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 1'),
+    (tid, 'ottavi', 2, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 2'),
+    (tid, 'ottavi', 3, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 3'),
+    (tid, 'ottavi', 4, '2026-07-15 07:00:00Z', 'scheduled', 'Campo 4'),
+    (tid, 'ottavi', 5, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 1'),
+    (tid, 'ottavi', 6, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 2'),
+    (tid, 'ottavi', 7, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 3'),
+    (tid, 'ottavi', 8, '2026-07-15 08:30:00Z', 'scheduled', 'Campo 4');
 
-  -- Semifinali — 4 partite il 17 lug
+  -- Quarti — 4 partite il 17 lug, 8 squadre
   INSERT INTO matches (tournament_id, phase, round, scheduled_at, status, court) VALUES
-    (tid, 'semifinale', 1, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 1'),
-    (tid, 'semifinale', 2, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 2'),
-    (tid, 'semifinale', 3, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 3'),
-    (tid, 'semifinale', 4, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 4');
+    (tid, 'quarti', 1, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 1'),
+    (tid, 'quarti', 2, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 2'),
+    (tid, 'quarti', 3, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 3'),
+    (tid, 'quarti', 4, '2026-07-17 07:00:00Z', 'scheduled', 'Campo 4');
+
+  -- Semifinali — 2 partite il 18 lug, 4 squadre
+  INSERT INTO matches (tournament_id, phase, round, scheduled_at, status, court) VALUES
+    (tid, 'semifinale', 1, '2026-07-18 07:00:00Z', 'scheduled', 'Campo 1'),
+    (tid, 'semifinale', 2, '2026-07-18 08:30:00Z', 'scheduled', 'Campo 2');
 
   -- 3° posto + Finale il 19 lug
   INSERT INTO matches (tournament_id, phase, round, scheduled_at, status, court) VALUES

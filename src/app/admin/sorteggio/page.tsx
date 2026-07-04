@@ -31,7 +31,7 @@ export default async function SorteggioPage() {
     .from('matches')
     .select('id, tournament_id, phase, round, team_home_id, team_away_id, scheduled_at')
     .in('phase', ['ottavi', 'quarti', 'semifinale'])
-    .order('scheduled_at')
+    .order('round')
 
   const { data: standingsRaw } = await sb.from('standings_view').select('*')
 
