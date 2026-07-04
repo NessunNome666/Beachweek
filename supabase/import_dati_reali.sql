@@ -31,6 +31,11 @@ DELETE FROM predictions_match;
 DELETE FROM predictions_winner;
 
 -- ── STEP 3 — Nomi reali delle squadre ───────────────────────────────────────
+-- Normalizzazione: "Squadra B3" era stata rinominata a mano nel Table Editor
+-- durante i test ("Negroni Sbagliato"); la riporto al segnaposto così la
+-- mappatura qui sotto la trova.
+UPDATE teams SET name = 'Squadra B3' WHERE name = 'Negroni Sbagliato';
+
 -- Sostituire ogni '⚠️ ...' con il nome reale. NON cambiare la colonna di
 -- sinistra (segnaposto) né l'ordine: la posizione nel girone determina il
 -- calendario (chi gioca contro chi in ogni turno).
@@ -321,7 +326,9 @@ FROM tournaments t,
   ('beach-volley-amatoriale', 'finale',      NULL,      '2026-07-19 22:00:00+02'),
   ('beach-volley-pro',        'finale',      NULL,      '2026-07-19 22:45:00+02')
 ) AS v(slug, fase, rnd, orario)
-WHERE t.slug = v.slug AND m.tournament_id = t.id AND m.phase = v.fase
+WHERE t.slug = v.slug AND m.tournament_id = t.id
+  -- phase è un enum: il cast esplicito è obbligatorio per confrontarlo col testo
+  AND m.phase = v.fase::match_phase
   AND (v.rnd IS NULL OR m.round = v.rnd);
 
 -- ── STEP 5 — Verifica ───────────────────────────────────────────────────────
