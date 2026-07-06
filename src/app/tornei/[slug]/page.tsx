@@ -8,6 +8,8 @@ import GironeTable from '@/components/GironeTable'
 import MatchCard from '@/components/MatchCard'
 import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 
+export const revalidate = 0
+
 const PHASE_ORDER = ['girone', 'ottavi', 'quarti', 'semifinale', 'terzo_posto', 'finale']
 const PHASE_LABEL: Record<string, string> = {
   ottavi: 'Ottavi di finale',

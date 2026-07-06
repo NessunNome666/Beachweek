@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Check, Loader2, AlertCircle, Plus, Minus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -46,6 +47,7 @@ function computeResult(sets: SetScore[]): { scoreHome: number; scoreAway: number
 }
 
 export default function AdminMatchForm({ match, homeTeamName, awayTeamName, isNext }: Props) {
+  const router = useRouter()
   const [sets, setSets] = useState<SetScore[]>(() => parseDetail(match.score_detail))
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(match.status === 'completed')
@@ -100,6 +102,8 @@ export default function AdminMatchForm({ match, homeTeamName, awayTeamName, isNe
       setError('Errore nel salvataggio. Riprova.')
     } else {
       setSaved(true)
+      // Aggiorna i dati server della pagina (badge IN CORSO, bordi card)
+      router.refresh()
     }
   }
 

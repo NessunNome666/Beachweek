@@ -5,6 +5,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import InstallBanner from '@/components/InstallBanner'
 import FooterConditional from '@/components/FooterConditional'
+import AutoRefresh from '@/components/AutoRefresh'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/HomescreenBG.png" as="image" />
       </head>
       <body className="min-h-full flex flex-col text-white antialiased">
+        <AutoRefresh />
         <Navbar />
         <main className="flex-1">{children}</main>
         <InstallBanner />

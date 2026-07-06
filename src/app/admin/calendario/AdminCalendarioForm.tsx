@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Check, Loader2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -44,6 +45,7 @@ function fromLocalDatetimeInput(local: string): string {
 }
 
 export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName }: Props) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [scheduledAt, setScheduledAt] = useState(toLocalDatetimeInput(match.scheduled_at))
   const [status, setStatus] = useState<'scheduled' | 'postponed'>(
@@ -75,6 +77,8 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
     } else {
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
+      // Aggiorna i dati server (l'orario nell'intestazione card e l'ordinamento)
+      router.refresh()
     }
   }
 
