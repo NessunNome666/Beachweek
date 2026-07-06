@@ -62,17 +62,21 @@ export function getQualifiedAmatoriale(
 export function getPairingsPro(
   standings: StandingRow[]
 ): { homeId: string; awayId: string }[] {
-  // I due gironi hanno nomi reali (es. "DE GIORGI" / "VELASCO"): si ricavano
-  // dai dati. Quale sia "A" e quale "B" non cambia gli accoppiamenti, solo casa/ospite.
+  // I nomi dei due gironi si ricavano dai dati, in ordine alfabetico:
+  // "DE GIORGI" < "VELASCO", quindi groupA = De Giorgi (il "primo" girone).
   const groupNames = [...new Set(standings.map((s) => s.group_name))].sort()
   const groupA = sortGroup(standings.filter((s) => s.group_name === groupNames[0]))
   const groupB = sortGroup(standings.filter((s) => s.group_name === groupNames[1]))
 
-  // 1°A vs 4°B, 2°A vs 3°B, 3°A vs 2°B, 4°A vs 1°B
+  // Topologia confermata dall'organizzazione (S1 = vinc Q1 × vinc Q2):
+  // Q1 = 1ª De Giorgi × 4ª Velasco
+  // Q2 = 2ª Velasco  × 3ª De Giorgi
+  // Q3 = 2ª De Giorgi × 3ª Velasco
+  // Q4 = 4ª De Giorgi × 1ª Velasco
   return [
     { homeId: groupA[0]?.team_id, awayId: groupB[3]?.team_id },
+    { homeId: groupB[1]?.team_id, awayId: groupA[2]?.team_id },
     { homeId: groupA[1]?.team_id, awayId: groupB[2]?.team_id },
-    { homeId: groupA[2]?.team_id, awayId: groupB[1]?.team_id },
     { homeId: groupA[3]?.team_id, awayId: groupB[0]?.team_id },
   ].filter((p) => p.homeId && p.awayId) as { homeId: string; awayId: string }[]
 }

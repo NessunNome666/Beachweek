@@ -97,7 +97,11 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   }))
 
   const groups = [...new Set(safeTeams.map((t) => t.group_name).filter(Boolean))] as string[]
-  const gironeMatches = safeMatches.filter((m) => m.phase === 'girone')
+  // Ordine cronologico esplicito: la query ordina per (phase, round) e dentro
+  // lo stesso round l'ordine non è garantito; copre anche le partite rinviate
+  const gironeMatches = safeMatches
+    .filter((m) => m.phase === 'girone')
+    .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
   const elimMatches = safeMatches.filter((m) => m.phase !== 'girone')
 
   // ── Calcolo qualificati ───────────────────────────────────

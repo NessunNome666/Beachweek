@@ -80,13 +80,13 @@ export default function MatchCard({
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <span className={`font-semibold truncate ${homeWon ? 'text-white' : 'text-slate-300'}`}>
+        <span className={`font-semibold text-sm leading-snug break-words min-w-0 ${homeWon ? 'text-white' : 'text-slate-300'}`}>
           {homeTeam?.name ?? 'Da definire'}
         </span>
         <span className="font-mono font-bold text-lg px-4 py-1.5 rounded-lg min-w-[5rem] text-center bg-slate-700/80">
           {isPostponed ? '—' : formatScore(match.score_home, match.score_away)}
         </span>
-        <span className={`font-semibold truncate text-right ${awayWon ? 'text-white' : 'text-slate-300'}`}>
+        <span className={`font-semibold text-sm leading-snug break-words min-w-0 text-right ${awayWon ? 'text-white' : 'text-slate-300'}`}>
           {awayTeam?.name ?? 'Da definire'}
         </span>
       </div>
