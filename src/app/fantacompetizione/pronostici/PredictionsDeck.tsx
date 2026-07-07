@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock, Users } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import ScoreButtons from '@/components/ScoreButtons'
+import { usePlayersVisible } from './PlayersVisibility'
 
 interface MatchItem {
   id: string
@@ -38,7 +39,8 @@ export default function PredictionsDeck({ matches }: Props) {
   )
   const [saveStates, setSaveStates] = useState<Record<string, SaveStatus>>({})
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [showPlayers, setShowPlayers] = useState(false)
+  // Rose visibili: comandate dalla pillola "Giocatori" nell'header di pagina
+  const showPlayers = usePlayersVisible()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const currentIndexRef = useRef(0)                     // specchio per i callback async
@@ -174,27 +176,23 @@ export default function PredictionsDeck({ matches }: Props) {
   const single = matches.length === 1
   const manyDots = matches.length > 12
   const showDots = matches.length <= 24
-  // Toggle rose visibile solo quando almeno una squadra ha atleti nel DB
-  const hasPlayers = matches.some((m) => (m.homePlayers?.length ?? 0) > 0 || (m.awayPlayers?.length ?? 0) > 0)
 
   return (
     <div>
-      {(!single || hasPlayers) && (
+      {!single && (
         <>
-          <div className={`flex items-center gap-2 ${single ? 'mb-3' : 'mb-1'}`}>
-            {!single && (
-              <button
-                type="button"
-                onClick={() => scrollToCard(currentIndex - 1)}
-                disabled={currentIndex === 0}
-                aria-label="Partita precedente"
-                className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
-              >
-                <ChevronLeft size={18} />
-              </button>
-            )}
+          <div className="flex items-center gap-2 mb-1">
+            <button
+              type="button"
+              onClick={() => scrollToCard(currentIndex - 1)}
+              disabled={currentIndex === 0}
+              aria-label="Partita precedente"
+              className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
+            >
+              <ChevronLeft size={18} />
+            </button>
             <div className="flex-1 flex justify-center items-center">
-              {!single && showDots &&
+              {showDots &&
                 matches.map((m, i) => {
                   const fill = m.locked ? 'bg-slate-800' : selections[m.id] ? 'bg-orange-400' : 'bg-slate-600'
                   const ring = i === currentIndex ? ' ring-2 ring-white/50' : ''
@@ -212,34 +210,19 @@ export default function PredictionsDeck({ matches }: Props) {
                   )
                 })}
             </div>
-            {!single && (
-              <button
-                type="button"
-                onClick={() => scrollToCard(currentIndex + 1)}
-                disabled={currentIndex === matches.length - 1}
-                aria-label="Partita successiva"
-                className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
-              >
-                <ChevronRight size={18} />
-              </button>
-            )}
-            {hasPlayers && (
-              <button
-                type="button"
-                onClick={() => setShowPlayers((v) => !v)}
-                aria-pressed={showPlayers}
-                aria-label="Mostra le rose"
-                className={`flex-none p-2 rounded-full ${showPlayers ? 'bg-slate-700 text-orange-400' : 'bg-slate-800 text-slate-300'}`}
-              >
-                <Users size={18} />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => scrollToCard(currentIndex + 1)}
+              disabled={currentIndex === matches.length - 1}
+              aria-label="Partita successiva"
+              className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
-          {!single && (
-            <p className="text-center text-xs text-slate-500 mb-3">
-              {currentIndex + 1} di {matches.length}
-            </p>
-          )}
+          <p className="text-center text-xs text-slate-500 mb-3">
+            {currentIndex + 1} di {matches.length}
+          </p>
         </>
       )}
 

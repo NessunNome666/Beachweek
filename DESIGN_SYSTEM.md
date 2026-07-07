@@ -125,6 +125,16 @@ Header con sottotitolo (login, mvp): `h1 mb-2` + `p text-slate-400 text-sm` (+`m
 Ghost/testuale: `text-slate-400 hover:text-orange-400` (o `hover:text-red-400` se distruttivo)
 con icona 12px. Icon button: `p-2 rounded-full bg-slate-800 text-slate-300`.
 
+### Pillola toggle (stato on/off persistente)
+`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm
+font-semibold transition-colors` — **off**: `bg-slate-900 border-slate-800 text-slate-400`;
+**on**: `bg-orange-500/15 border-orange-400 text-white` con icona `text-orange-400`.
+Usi: riga sotto l'h1 di /pronostici con **Notifiche** (Bell → BellRing,
+`NotificationOptIn variant="compact"`; il tap su stato denied/need-install mostra l'hint sotto)
+e **Giocatori** (EyeOff → Eye, comanda le rose del deck via store condiviso
+`PlayersVisibility.tsx`). Variante icona-sola: occhio 13px nel thead di GironeTable.
+Lo stesso schema on/off vale per i bottoni-stato MVP (candidato selezionato, stato votazione).
+
 ### MatchCard (pubblica)
 `bg-slate-900 border-slate-800 rounded-xl px-4 py-3`. Meta `text-xs text-slate-500`
 (fase — Round N | dot + stato). Punteggio in pillola `font-mono font-bold text-lg bg-slate-800
@@ -148,8 +158,11 @@ Card standard con bordo di stato: `border-orange-400` (corrente/attenzione),
 Wrapper `overflow-x-auto rounded-xl border border-slate-800`. Thead `bg-slate-800 text-slate-400
 text-xs uppercase tracking-wide`, celle `px-3/px-2 py-2.5`, righe `border-t border-slate-800
 hover:bg-slate-800/40`. Colonna Pt: header e valori `text-orange-400` (valori `font-bold`).
-Chip: Q = `bg-green-500/20 text-green-400 border-green-500/30`; — = `bg-slate-800 text-slate-400
-border-slate-700`; entrambi `text-[10px] font-bold px-1.5 py-0.5 rounded`.
+**Qualificate**: niente chip (le Q verdi e i — sono stati rimossi) — le righe qualificate sono
+evidenziate con `bg-orange-500/10` e bordi `border-orange-400/50` sopra/sotto il blocco
+(nessuna evidenza quando tutte qualificano, es. Pro). **Rose**: occhio EyeOff/Eye 13px nel thead
+accanto a "Squadra" (solo se esistono dati), mostra le sotto-righe giocatori di tutto il girone
+(`text-xs text-slate-400`, mai troncate, tinte orange se la riga è qualificata).
 
 ### Badge pillola
 `text-xs font-semibold px-2 py-0.5 rounded-full` — Oggi: `bg-orange-500/20 text-orange-400`.
@@ -184,6 +197,13 @@ attiva `text-orange-400 font-semibold`. Il gruppo admin è introdotto dall'etich
 - **H1–H3** testi: "Vedi i tornei" ovunque, descrizioni slate-400, "Salvato" secco
 - **I1–I2** layout: `px-4 py-6` + h1 `mb-6` ovunque, admin da 4xl a 3xl, empty state unico `py-16`
 - **L1–L2** navbar: voci admin = stesso schema colore + etichetta di gruppo, icone auth 18px
+
+Ritocchi della seconda passata (stesso giorno, su indicazione dell'utente):
+- banner notifiche di /pronostici → pillola toggle compatta, affiancata dalla nuova pillola
+  **Giocatori** (occhio) che sostituisce il bottone Users nell'header del deck
+- rose nei gironi: occhio nel thead al posto dei chevron per riga (mostra tutto il girone)
+- qualificazione nelle tabelle: righe evidenziate in accent al posto dei chip Q/—;
+  colonna "Stato" e sottotitolo rimossi dalla classifica terze
 
 Nota: `PredictionsBatchForm.tsx` conserva classi pre-canone perché è un file di solo rollback,
 mai renderizzato. Se venisse riattivato, va prima allineato al canone.

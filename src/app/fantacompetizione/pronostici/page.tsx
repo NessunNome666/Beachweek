@@ -6,6 +6,7 @@ import PredictionsDeck from './PredictionsDeck'
 import WinnerPredictionForm from './WinnerPredictionForm'
 import ResultsCollapse from './ResultsCollapse'
 import NotificationOptIn from '@/components/NotificationOptIn'
+import { PlayersToggle } from './PlayersVisibility'
 
 export const revalidate = 0
 
@@ -103,6 +104,11 @@ export default async function PronosticiPage() {
     }),
   }))
 
+  // Pillola "Giocatori" mostrata solo se almeno una squadra nel deck ha la rosa nel DB
+  const deckHasPlayers = batchMatches.some(
+    (m) => (m.homePlayers?.length ?? 0) > 0 || (m.awayPlayers?.length ?? 0) > 0
+  )
+
   // Lock podio automatico per torneo: tutti i gironi di quel torneo completati
   const isPodioLocked = (t: Tournament) => {
     const gm = matches.filter((m) => m.tournament_id === t.id && m.phase === 'girone')
@@ -113,7 +119,14 @@ export default async function PronosticiPage() {
     <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-white mb-6">I miei pronostici</h1>
 
-      <NotificationOptIn />
+      <div className="flex items-start gap-2 mb-6">
+        <NotificationOptIn variant="compact" />
+        {deckHasPlayers && (
+          <div className="flex-1 min-w-0">
+            <PlayersToggle />
+          </div>
+        )}
+      </div>
 
       {completedMatches.length > 0 && (
         <ResultsCollapse count={completedMatches.length}>

@@ -197,9 +197,6 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
           <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             Classifica terze piazzate
           </h2>
-          <p className="text-slate-400 text-sm mb-4">
-            Le 2 migliori terze tra tutti i gironi si qualificano al tabellone finale.
-          </p>
           <div className="overflow-x-auto rounded-xl border border-slate-800 max-w-xl">
             <table className="w-full text-sm">
               <thead>
@@ -208,12 +205,16 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                   <th className="px-2 py-2.5 font-medium">Girone</th>
                   <th className="px-2 py-2.5 font-medium text-orange-400">Pt</th>
                   <th className="px-2 py-2.5 font-medium">Set</th>
-                  <th className="px-2 py-2.5 font-medium">Stato</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedThirds.map((row, i) => (
-                  <tr key={row.team_id} className="border-t border-slate-800 text-slate-300">
+                  <tr
+                    key={row.team_id}
+                    className={`border-t text-slate-300 ${i <= 2 ? 'border-orange-400/50' : 'border-slate-800'} ${
+                      i < 2 ? 'bg-orange-500/10' : ''
+                    }`}
+                  >
                     <td className="px-3 py-2.5 font-medium flex items-center gap-2">
                       <span className="text-xs text-slate-500 w-4">{i + 1}</span>
                       {row.team_name}
@@ -221,13 +222,6 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                     <td className="px-2 py-2.5 text-center">{row.group_name}</td>
                     <td className="px-2 py-2.5 text-center font-bold text-orange-400">{row.points}</td>
                     <td className="px-2 py-2.5 text-center">{row.sets_won}-{row.sets_lost}</td>
-                    <td className="px-2 py-2.5 text-center">
-                      {i < 2 ? (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/30">Q</span>
-                      ) : (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">—</span>
-                      )}
-                    </td>
                   </tr>
                 ))}
               </tbody>

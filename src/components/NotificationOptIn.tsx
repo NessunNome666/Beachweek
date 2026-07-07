@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bell, BellRing, Share, Loader2 } from 'lucide-react'
+import { AlertCircle, Bell, BellRing, Share, Loader2 } from 'lucide-react'
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
@@ -18,9 +18,11 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
 
 type State = 'loading' | 'hidden' | 'need-install' | 'prompt' | 'granted' | 'denied' | 'working'
 
-export default function NotificationOptIn() {
+export default function NotificationOptIn({ variant = 'card' }: { variant?: 'card' | 'compact' }) {
   const [state, setState] = useState<State>('loading')
   const [error, setError] = useState('')
+  // Solo variante compatta: suggerimento mostrato al tap quando il tap non può agire
+  const [hint, setHint] = useState(false)
 
   useEffect(() => {
     const supported =
@@ -120,6 +122,55 @@ export default function NotificationOptIn() {
 
   if (state === 'loading' || state === 'hidden') return null
 
+  // Variante compatta: pillola-toggle affiancabile (usata in /pronostici)
+  if (variant === 'compact') {
+    const active = state === 'granted'
+    const onClick = () => {
+      if (state === 'prompt') enable()
+      else if (state === 'granted') disable()
+      else setHint(true) // denied | need-install: il tap spiega perché non può attivare
+    }
+    return (
+      <div className="flex-1 min-w-0">
+        <button
+          type="button"
+          onClick={onClick}
+          disabled={state === 'working'}
+          aria-pressed={active}
+          className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-semibold transition-colors ${
+            active ? 'bg-orange-500/15 border-orange-400 text-white' : 'bg-slate-900 border-slate-800 text-slate-400'
+          }`}
+        >
+          {state === 'working' ? (
+            <Loader2 size={15} className="animate-spin" />
+          ) : active ? (
+            <BellRing size={15} className="text-orange-400" />
+          ) : (
+            <Bell size={15} />
+          )}
+          Notifiche
+        </button>
+        {hint && state === 'need-install' && (
+          <p className="text-xs text-slate-400 leading-snug mt-2">
+            Su iPhone le notifiche arrivano solo dall&apos;app installata: tocca{' '}
+            <Share size={12} className="inline -mt-0.5" /> <strong>Condividi</strong> &rarr;{' '}
+            <strong>&quot;Aggiungi alla schermata Home&quot;</strong>, poi riapri l&apos;app da lì.
+          </p>
+        )}
+        {hint && state === 'denied' && (
+          <p className="text-xs text-slate-400 leading-snug mt-2">
+            Notifiche bloccate: abilitale per questo sito dalle impostazioni del browser.
+          </p>
+        )}
+        {error && (
+          <p className="flex items-center gap-1.5 text-red-400 text-xs mt-2">
+            <AlertCircle size={12} /> {error}
+          </p>
+        )}
+      </div>
+    )
+  }
+
   const base = 'rounded-xl border px-4 py-3 mb-6 text-sm'
 
   if (state === 'need-install') {
@@ -188,7 +239,11 @@ export default function NotificationOptIn() {
           Attiva
         </button>
       </div>
-      {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+      {error && (
+        <p className="flex items-center gap-1.5 text-red-400 text-xs mt-2">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
     </div>
   )
 }
