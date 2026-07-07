@@ -158,11 +158,11 @@ Card standard con bordo di stato: `border-orange-400` (corrente/attenzione),
 Wrapper `overflow-x-auto rounded-xl border border-slate-800`. Thead `bg-slate-800 text-slate-400
 text-xs uppercase tracking-wide`, celle `px-3/px-2 py-2.5`, righe `border-t border-slate-800
 hover:bg-slate-800/40`. Colonna Pt: header e valori `text-orange-400` (valori `font-bold`).
-**Qualificate**: niente chip (le Q verdi e i — sono stati rimossi) — le righe qualificate sono
-evidenziate con `bg-orange-500/10` e bordi `border-orange-400/50` sopra/sotto il blocco
-(nessuna evidenza quando tutte qualificano, es. Pro). **Rose**: occhio EyeOff/Eye 13px nel thead
-accanto a "Squadra" (solo se esistono dati), mostra le sotto-righe giocatori di tutto il girone
-(`text-xs text-slate-400`, mai troncate, tinte orange se la riga è qualificata).
+**Qualificate**: niente chip (le Q verdi e i — sono stati rimossi) e nessuna evidenza nelle
+tabelle dei singoli gironi — SOLO la classifica terze piazzate evidenzia le prime 2 righe con
+`bg-orange-500/10` e bordi `border-orange-400/50` sopra/sotto il blocco. **Rose**: occhio
+EyeOff/Eye 13px nel thead accanto a "Squadra" (solo se esistono dati), mostra le sotto-righe
+giocatori di tutto il girone (`text-xs text-slate-400`, mai troncate).
 
 ### Badge pillola
 `text-xs font-semibold px-2 py-0.5 rounded-full` — Oggi: `bg-orange-500/20 text-orange-400`.

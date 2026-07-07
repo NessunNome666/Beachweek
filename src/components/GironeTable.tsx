@@ -7,19 +7,15 @@ import { sortGroup } from '@/lib/qualification'
 
 interface Props {
   standings: StandingRow[]
-  qualifiedIds?: string[]
-  allQualified?: boolean
   playersByTeamId?: Record<string, string[]>
 }
 
-export default function GironeTable({ standings, qualifiedIds = [], allQualified = false, playersByTeamId }: Props) {
+export default function GironeTable({ standings, playersByTeamId }: Props) {
   const sorted = sortGroup(standings)
   const [showPlayers, setShowPlayers] = useState(false)
 
   // Occhio visibile solo se almeno una squadra del girone ha la rosa nel DB
   const hasPlayers = sorted.some((r) => playersByTeamId?.[r.team_id]?.length)
-  // Con tutte le squadre qualificate (Pro) l'evidenza non aggiunge informazione
-  const isQualified = (teamId: string) => !allQualified && qualifiedIds.includes(teamId)
 
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-800">
@@ -52,16 +48,9 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
         <tbody>
           {sorted.map((row, i) => {
             const players = playersByTeamId?.[row.team_id]
-            const q = isQualified(row.team_id)
-            // Il bordo accent chiude anche il fondo del blocco qualificate (= top della riga dopo)
-            const edge = q || (i > 0 && isQualified(sorted[i - 1].team_id))
             return (
               <Fragment key={row.team_id}>
-                <tr
-                  className={`border-t transition-colors ${edge ? 'border-orange-400/50' : 'border-slate-800'} ${
-                    q ? 'bg-orange-500/10' : 'hover:bg-slate-800/40'
-                  }`}
-                >
+                <tr className="border-t border-slate-800 hover:bg-slate-800/40 transition-colors">
                   <td className="px-3 py-2.5 font-medium text-white">
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-slate-500 w-4">{i + 1}</span>
@@ -79,7 +68,7 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
                   <td className="px-2 py-2.5 text-center font-bold text-orange-400">{row.points}</td>
                 </tr>
                 {showPlayers && !!players?.length && (
-                  <tr className={q ? 'bg-orange-500/10' : ''}>
+                  <tr>
                     {/* Sotto-riga rosa: senza border-t si legge come parte della riga sopra */}
                     <td colSpan={6} className="px-3 pb-2.5 pl-8 text-xs text-slate-400">
                       {players.join(', ')}

@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import {
-  getQualifiedAmatoriale, getPairingsPro, getQualifiedFootVolley, sortGroup,
-} from '@/lib/qualification'
+import { getPairingsPro, sortGroup } from '@/lib/qualification'
 import type { StandingRow } from '@/lib/qualification'
 import GironeTable from '@/components/GironeTable'
 import MatchCard from '@/components/MatchCard'
@@ -110,24 +108,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
   const elimMatches = safeMatches.filter((m) => m.phase !== 'girone')
 
-  // ── Calcolo qualificati ───────────────────────────────────
-  let qualifiedIds: string[] = []
-  let bestThirdIds: string[] = []
-  let allQualified = false
-  let pairings: { homeId: string; awayId: string }[] = []
-
-  if (tid === 'ama') {
-    const result = getQualifiedAmatoriale(standings, groups)
-    qualifiedIds = result.qualifiedIds
-    bestThirdIds = result.bestThirdIds
-  } else if (tid === 'pro') {
-    allQualified = true
-    pairings = getPairingsPro(standings)
-  } else if (tid === 'fv') {
-    qualifiedIds = getQualifiedFootVolley(standings, groups)
-  }
-
-  const allQualifiedIds = [...qualifiedIds, ...bestThirdIds]
+  // Proiezione live dei quarti Pro (nascosta quando esistono i quarti reali)
+  const pairings = tid === 'pro' ? getPairingsPro(standings) : []
 
   const gridCols =
     groups.length <= 2 ? 'grid-cols-1 sm:grid-cols-2' :
@@ -168,12 +150,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
               return (
                 <div key={group} className="space-y-3">
                   <h3 className="font-heading font-bold text-lg text-slate-300">{group}</h3>
-                  <GironeTable
-                    standings={groupStandings}
-                    qualifiedIds={allQualifiedIds}
-                    allQualified={allQualified}
-                    playersByTeamId={playersByTeamId}
-                  />
+                  <GironeTable standings={groupStandings} playersByTeamId={playersByTeamId} />
                   <GroupMatchesAccordion>
                     {groupMatches.map((m) => (
                       <MatchCard
