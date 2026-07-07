@@ -304,6 +304,7 @@ export type Database = {
           group_name: string | null
           id: string
           name: string
+          players: string[] | null
           tournament_id: string
         }
         Insert: {
@@ -311,6 +312,7 @@ export type Database = {
           group_name?: string | null
           id?: string
           name: string
+          players?: string[] | null
           tournament_id: string
         }
         Update: {
@@ -318,6 +320,7 @@ export type Database = {
           group_name?: string | null
           id?: string
           name?: string
+          players?: string[] | null
           tournament_id?: string
         }
         Relationships: [

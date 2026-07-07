@@ -71,9 +71,13 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   const safeTeams: Array<{
     id: string; name: string; tournament_id: string
     group_name: string | null; created_at: string
+    players: string[] | null
   }> = teamsRaw ?? []
 
   const teamsById = new Map(safeTeams.map((t) => [t.id, t]))
+  const playersByTeamId = Object.fromEntries(
+    safeTeams.filter((t) => t.players?.length).map((t) => [t.id, t.players!])
+  )
 
   const safeMatches: Array<{
     id: string; tournament_id: string; phase: string; round: number
@@ -170,6 +174,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
                     standings={groupStandings}
                     qualifiedIds={allQualifiedIds}
                     allQualified={allQualified}
+                    playersByTeamId={playersByTeamId}
                   />
                   <GroupMatchesAccordion>
                     {groupMatches.map((m) => (

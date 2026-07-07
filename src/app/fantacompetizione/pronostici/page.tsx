@@ -14,7 +14,7 @@ interface Match {
   team_home_id: string | null; team_away_id: string | null; status: string
   score_home: number | null; score_away: number | null; scheduled_at: string
 }
-interface Team { id: string; name: string; tournament_id: string }
+interface Team { id: string; name: string; tournament_id: string; players: string[] | null }
 interface Tournament { id: string; name: string; slug: string; predictions_locked: boolean }
 interface PredictionMatch { match_id: string; predicted_home: number; predicted_away: number }
 interface PredictionWinner { tournament_id: string; placement: number; predicted_team_id: string }
@@ -36,13 +36,16 @@ export default async function PronosticiPage() {
     .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away, scheduled_at')
     .order('scheduled_at')
 
-  const { data: teamsRaw } = await sb.from('teams').select('id, name, tournament_id')
+  // select('*') e non le colonne esplicite: la pagina funziona anche se la
+  // migration 010 (colonna players) non è ancora applicata al DB
+  const { data: teamsRaw } = await sb.from('teams').select('*')
   const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug, predictions_locked').order('created_at')
 
   const matches = (matchesRaw ?? []) as Match[]
   const teams = (teamsRaw ?? []) as Team[]
   const tournaments = (tournamentsRaw ?? []) as Tournament[]
   const teamsMap = Object.fromEntries(teams.map((t) => [t.id, t.name]))
+  const playersMap = Object.fromEntries(teams.map((t) => [t.id, t.players ?? []]))
 
   let existingPredictions: PredictionMatch[] = []
   let existingWinnerPredictions: PredictionWinner[] = []
@@ -87,6 +90,8 @@ export default async function PronosticiPage() {
     id: m.id,
     homeTeamName: m.team_home_id ? (teamsMap[m.team_home_id] ?? 'Da definire') : 'Da definire',
     awayTeamName: m.team_away_id ? (teamsMap[m.team_away_id] ?? 'Da definire') : 'Da definire',
+    homePlayers: m.team_home_id ? playersMap[m.team_home_id] : undefined,
+    awayPlayers: m.team_away_id ? playersMap[m.team_away_id] : undefined,
     // Congelata quando la partita è iniziata (cutoff = orario d'inizio) o è in corso/rinviata
     locked: new Date(m.scheduled_at).getTime() <= now || m.status === 'in_progress',
     postponed: m.status === 'postponed',

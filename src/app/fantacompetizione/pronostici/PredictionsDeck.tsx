@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import ScoreButtons from '@/components/ScoreButtons'
 
@@ -15,6 +15,8 @@ interface MatchItem {
   initialPrediction?: string
   phaseLabel?: string
   timeLabel?: string       // orario d'inizio già formattato lato server (es. "18:30")
+  homePlayers?: string[]
+  awayPlayers?: string[]
 }
 
 interface Props {
@@ -36,6 +38,7 @@ export default function PredictionsDeck({ matches }: Props) {
   )
   const [saveStates, setSaveStates] = useState<Record<string, SaveStatus>>({})
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [showPlayers, setShowPlayers] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const currentIndexRef = useRef(0)                     // specchio per i callback async
@@ -171,23 +174,27 @@ export default function PredictionsDeck({ matches }: Props) {
   const single = matches.length === 1
   const manyDots = matches.length > 12
   const showDots = matches.length <= 24
+  // Toggle rose visibile solo quando almeno una squadra ha atleti nel DB
+  const hasPlayers = matches.some((m) => (m.homePlayers?.length ?? 0) > 0 || (m.awayPlayers?.length ?? 0) > 0)
 
   return (
     <div>
-      {!single && (
+      {(!single || hasPlayers) && (
         <>
-          <div className="flex items-center gap-2 mb-1">
-            <button
-              type="button"
-              onClick={() => scrollToCard(currentIndex - 1)}
-              disabled={currentIndex === 0}
-              aria-label="Partita precedente"
-              className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
-            >
-              <ChevronLeft size={18} />
-            </button>
+          <div className={`flex items-center gap-2 ${single ? 'mb-3' : 'mb-1'}`}>
+            {!single && (
+              <button
+                type="button"
+                onClick={() => scrollToCard(currentIndex - 1)}
+                disabled={currentIndex === 0}
+                aria-label="Partita precedente"
+                className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
+              >
+                <ChevronLeft size={18} />
+              </button>
+            )}
             <div className="flex-1 flex justify-center items-center">
-              {showDots &&
+              {!single && showDots &&
                 matches.map((m, i) => {
                   const fill = m.locked ? 'bg-slate-800' : selections[m.id] ? 'bg-amber-400' : 'bg-slate-600'
                   const ring = i === currentIndex ? ' ring-2 ring-white/50' : ''
@@ -205,19 +212,34 @@ export default function PredictionsDeck({ matches }: Props) {
                   )
                 })}
             </div>
-            <button
-              type="button"
-              onClick={() => scrollToCard(currentIndex + 1)}
-              disabled={currentIndex === matches.length - 1}
-              aria-label="Partita successiva"
-              className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
-            >
-              <ChevronRight size={18} />
-            </button>
+            {!single && (
+              <button
+                type="button"
+                onClick={() => scrollToCard(currentIndex + 1)}
+                disabled={currentIndex === matches.length - 1}
+                aria-label="Partita successiva"
+                className="flex-none p-2 rounded-full bg-slate-800 text-slate-300 disabled:opacity-30"
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+            {hasPlayers && (
+              <button
+                type="button"
+                onClick={() => setShowPlayers((v) => !v)}
+                aria-pressed={showPlayers}
+                aria-label="Mostra le rose"
+                className={`flex-none p-2 rounded-full ${showPlayers ? 'bg-slate-700 text-amber-400' : 'bg-slate-800 text-slate-300'}`}
+              >
+                <Users size={18} />
+              </button>
+            )}
           </div>
-          <p className="text-center text-xs text-slate-500 mb-3">
-            {currentIndex + 1} di {matches.length}
-          </p>
+          {!single && (
+            <p className="text-center text-xs text-slate-500 mb-3">
+              {currentIndex + 1} di {matches.length}
+            </p>
+          )}
         </>
       )}
 
@@ -260,8 +282,19 @@ export default function PredictionsDeck({ matches }: Props) {
 
               <div className="text-center">
                 <p className={`text-base font-semibold truncate ${match.locked ? 'text-slate-400' : ''}`}>{match.homeTeamName}</p>
+                {/* Slot rose ad altezza fissa su ogni card: l'allineamento non cambia */}
+                {showPlayers && (
+                  <p className={`h-8 text-xs leading-4 line-clamp-2 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
+                    {match.homePlayers?.join(', ')}
+                  </p>
+                )}
                 <p className="text-xs text-slate-500 my-0.5">vs</p>
                 <p className={`text-base font-semibold truncate ${match.locked ? 'text-slate-400' : ''}`}>{match.awayTeamName}</p>
+                {showPlayers && (
+                  <p className={`h-8 text-xs leading-4 line-clamp-2 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
+                    {match.awayPlayers?.join(', ')}
+                  </p>
+                )}
               </div>
 
               {/* Pronostico corrente in uno slot fisso: nessun salto di layout */}
