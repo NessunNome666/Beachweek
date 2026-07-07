@@ -282,16 +282,16 @@ export default function PredictionsDeck({ matches }: Props) {
 
               <div className="text-center">
                 <p className={`text-base font-semibold truncate ${match.locked ? 'text-slate-400' : ''}`}>{match.homeTeamName}</p>
-                {/* Slot rose ad altezza fissa su ogni card: l'allineamento non cambia */}
+                {/* Rose mai troncate (fino a 6 iscritti a referto): altezza libera, min-h per uniformità */}
                 {showPlayers && (
-                  <p className={`h-8 text-xs leading-4 line-clamp-2 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
+                  <p className={`min-h-8 text-xs leading-4 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
                     {match.homePlayers?.join(', ')}
                   </p>
                 )}
                 <p className="text-xs text-slate-500 my-0.5">vs</p>
                 <p className={`text-base font-semibold truncate ${match.locked ? 'text-slate-400' : ''}`}>{match.awayTeamName}</p>
                 {showPlayers && (
-                  <p className={`h-8 text-xs leading-4 line-clamp-2 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
+                  <p className={`min-h-8 text-xs leading-4 ${match.locked ? 'text-slate-500' : 'text-slate-400'}`}>
                     {match.awayPlayers?.join(', ')}
                   </p>
                 )}
