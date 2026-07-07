@@ -31,9 +31,9 @@ export default async function AdminCalendarioPage() {
 
   if (!matches.length) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-5">
-        <h1 className="text-2xl font-bold text-white mb-4">Gestione Calendario</h1>
-        <p className="text-slate-400">Nessuna partita trovata. Esegui prima il seed dei match su Supabase.</p>
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <h1 className="text-3xl font-bold text-white mb-6">Gestione Calendario</h1>
+        <p className="text-center py-16 text-slate-500">Nessuna partita trovata. Esegui prima il seed dei match su Supabase.</p>
       </div>
     )
   }
@@ -53,8 +53,8 @@ export default async function AdminCalendarioPage() {
   const todayKey = toGameDate(new Date().toISOString())
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-6">Gestione Calendario</h1>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6">Gestione Calendario</h1>
 
       <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {
@@ -68,6 +68,11 @@ export default async function AdminCalendarioPage() {
               isToday={isToday}
               isPast={isPast}
               defaultOpen={!isPast}
+              badge={isToday ? (
+                <span className="text-xs font-semibold bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
+                  Oggi
+                </span>
+              ) : undefined}
             >
               <div className="space-y-2 mb-4">
                 {dayMatches.map((match) => {

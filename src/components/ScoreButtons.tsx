@@ -32,7 +32,7 @@ export default function ScoreButtons({
             onClick={() => onSelect(key)}
             className={`${sizing} rounded-lg font-mono font-bold transition-colors ${
               selected === key
-                ? 'bg-amber-400 text-slate-900'
+                ? 'bg-orange-400 text-slate-900'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >

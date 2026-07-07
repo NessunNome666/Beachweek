@@ -26,7 +26,7 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
     }
     if (position === 2) {
       return (
-        <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-700 text-slate-400 border border-slate-600">
+        <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
           —
         </span>
       )
@@ -35,10 +35,10 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-700">
+    <div className="overflow-x-auto rounded-xl border border-slate-800">
       <table className="w-full text-sm min-w-[280px]">
         <thead>
-          <tr className="bg-slate-700/80 text-slate-400 text-xs uppercase tracking-wide">
+          <tr className="bg-slate-800 text-slate-400 text-xs uppercase tracking-wide">
             <th className="text-left px-3 py-2.5 font-medium">Squadra</th>
             <th className="px-2 py-2.5 font-medium">V</th>
             <th className="px-2 py-2.5 font-medium">P</th>
@@ -56,7 +56,7 @@ export default function GironeTable({ standings, qualifiedIds = [], allQualified
             return (
               <Fragment key={row.team_id}>
                 <tr
-                  className={`border-t border-slate-700/60 hover:bg-slate-700/20 transition-colors ${expandable ? 'cursor-pointer' : ''}`}
+                  className={`border-t border-slate-800 hover:bg-slate-800/40 transition-colors ${expandable ? 'cursor-pointer' : ''}`}
                   onClick={expandable ? toggle : undefined}
                   onKeyDown={
                     expandable

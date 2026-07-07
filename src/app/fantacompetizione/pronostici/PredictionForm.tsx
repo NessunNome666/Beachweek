@@ -54,7 +54,7 @@ export default function PredictionForm({
       }`}>
         <div className="flex items-center justify-between mb-3 text-sm font-semibold">
           <span className="flex-1 truncate">{homeTeamName}</span>
-          <span className="text-slate-500 px-3">vs</span>
+          <span className="text-xs text-slate-500 px-3">vs</span>
           <span className="flex-1 truncate text-right">{awayTeamName}</span>
         </div>
 
@@ -149,13 +149,13 @@ export default function PredictionForm({
         className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-colors ${
           saved
             ? 'bg-green-500/20 text-green-400'
-            : 'bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white'
+            : 'bg-orange-400 text-slate-900 hover:bg-orange-300 disabled:opacity-40'
         }`}
       >
         {loading ? (
           <><Loader2 size={14} className="animate-spin" /> Salvataggio…</>
         ) : saved ? (
-          <><Check size={14} /> Salvato!</>
+          <><Check size={14} /> Salvato</>
         ) : (
           'Conferma pronostico'
         )}

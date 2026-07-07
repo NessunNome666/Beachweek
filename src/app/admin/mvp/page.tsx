@@ -23,8 +23,8 @@ export default async function AdminMvpPage() {
   const candidates = (candidatesRaw ?? []) as Candidate[]
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-6">Votazione MVP</h1>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6">Votazione MVP</h1>
       <AdminMvpManager tournaments={tournaments} candidates={candidates} />
     </div>
   )

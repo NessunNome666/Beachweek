@@ -31,7 +31,7 @@ export default function InstallBanner() {
   if (!os || dismissed) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-orange-500 text-white px-4 py-3 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-3 shadow-lg">
       <button
         onClick={dismiss}
         className="absolute top-2 right-3 p-1 opacity-80 hover:opacity-100"

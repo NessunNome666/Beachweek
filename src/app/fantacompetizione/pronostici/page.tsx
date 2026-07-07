@@ -111,7 +111,7 @@ export default async function PronosticiPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-white mb-4">I miei pronostici</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">I miei pronostici</h1>
 
       <NotificationOptIn />
 
@@ -134,12 +134,9 @@ export default async function PronosticiPage() {
 
       {batchMatches.length > 0 ? (
         <section className="mb-12">
-          <h2 className="text-lg font-bold text-orange-400 mb-1">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             {`Partite${activeDayIndex !== null ? ` - Giorno ${activeDayIndex}` : ''}`}
           </h2>
-          <p className="text-xs text-slate-500 mb-4">
-            Pronostica e modifica fino all&apos;orario d&apos;inizio. A partita iniziata il pronostico si blocca.
-          </p>
           <PredictionsDeck matches={batchMatches} />
         </section>
       ) : completedMatches.length === 0 ? (
@@ -149,12 +146,9 @@ export default async function PronosticiPage() {
       ) : null}
 
       <section>
-        <h2 className="text-lg font-bold text-orange-400 mb-1">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
           Pronostica il podio finale
         </h2>
-        <p className="text-xs text-slate-500 mb-5">
-          5 pt per ogni piazzamento indovinato - si bloccano automaticamente al termine dei gironi di ciascun torneo
-        </p>
         <div className="space-y-6">
           {tournaments.map((t) => {
             const tournamentTeams = teams.filter((team) => team.tournament_id === t.id)

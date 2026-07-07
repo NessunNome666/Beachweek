@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 
 interface Props {
   dayLabel: string
@@ -27,9 +28,10 @@ export default function DayAccordion({ dayLabel, badge, isPast, defaultOpen, chi
           </h2>
           {badge}
         </div>
-        <span className={`text-xs ${open ? 'text-orange-400' : isPast ? 'text-slate-700' : 'text-slate-500'}`}>
-          {open ? '▲' : '▼'}
-        </span>
+        <ChevronDown
+          size={16}
+          className={`transition-transform ${open ? 'rotate-180 text-orange-400' : isPast ? 'text-slate-700' : 'text-slate-500'}`}
+        />
       </button>
       {open && children}
     </section>

@@ -149,14 +149,12 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white">{torneo.name}</h1>
-      </div>
+      <h1 className="text-3xl font-bold text-white mb-6">{torneo.name}</h1>
 
       {/* ── FASE GIRONI ── */}
       {groups.length > 0 && (
-        <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-6">
+        <section className="mb-12">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             Fase a Gironi
           </h2>
           <div className={`grid ${gridCols} gap-8`}>
@@ -195,8 +193,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
 
       {/* ── MIGLIORI TERZE (solo Amatoriale) ── */}
       {tid === 'ama' && sortedThirds.length > 0 && (
-        <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
+        <section className="mb-12">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             Classifica terze piazzate
           </h2>
           <p className="text-slate-400 text-sm mb-4">
@@ -205,29 +203,29 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
           <div className="overflow-x-auto rounded-xl border border-slate-800 max-w-xl">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-800/60 text-slate-400 text-xs uppercase tracking-wide">
-                  <th className="text-left px-4 py-3 font-medium">Squadra</th>
-                  <th className="px-3 py-3 font-medium">Girone</th>
-                  <th className="px-3 py-3 font-medium">Pt</th>
-                  <th className="px-3 py-3 font-medium">Set</th>
-                  <th className="px-3 py-3 font-medium">Stato</th>
+                <tr className="bg-slate-800 text-slate-400 text-xs uppercase tracking-wide">
+                  <th className="text-left px-3 py-2.5 font-medium">Squadra</th>
+                  <th className="px-2 py-2.5 font-medium">Girone</th>
+                  <th className="px-2 py-2.5 font-medium text-orange-400">Pt</th>
+                  <th className="px-2 py-2.5 font-medium">Set</th>
+                  <th className="px-2 py-2.5 font-medium">Stato</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedThirds.map((row, i) => (
                   <tr key={row.team_id} className="border-t border-slate-800 text-slate-300">
-                    <td className="px-4 py-3 font-medium flex items-center gap-2">
+                    <td className="px-3 py-2.5 font-medium flex items-center gap-2">
                       <span className="text-xs text-slate-500 w-4">{i + 1}</span>
                       {row.team_name}
                     </td>
-                    <td className="px-3 py-3 text-center text-slate-400">{row.group_name}</td>
-                    <td className="px-3 py-3 text-center font-bold text-orange-400">{row.points}</td>
-                    <td className="px-3 py-3 text-center text-slate-400">{row.sets_won}-{row.sets_lost}</td>
-                    <td className="px-3 py-3 text-center">
+                    <td className="px-2 py-2.5 text-center">{row.group_name}</td>
+                    <td className="px-2 py-2.5 text-center font-bold text-orange-400">{row.points}</td>
+                    <td className="px-2 py-2.5 text-center">{row.sets_won}-{row.sets_lost}</td>
+                    <td className="px-2 py-2.5 text-center">
                       {i < 2 ? (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/30">Q</span>
                       ) : (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-700 text-slate-500 border border-slate-600">—</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">—</span>
                       )}
                     </td>
                   </tr>
@@ -240,8 +238,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
 
       {/* ── ACCOPPIAMENTI PRO (proiezione, nascosta quando i quarti reali esistono) ── */}
       {tid === 'pro' && pairings.length > 0 && !hasRealElimMatches && (
-        <section className="mb-14">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">
+        <section className="mb-12">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             Quarti di finale
           </h2>
           <div className="space-y-2 max-w-lg">
@@ -264,7 +262,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       {/* ── FASE ELIMINAZIONE ── */}
       {elimPhases.length > 0 ? (
         <section>
-          <h2 className="text-sm font-bold uppercase tracking-widest text-orange-400 mb-6">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             Fase a Eliminazione
           </h2>
           {elimPhases.map((phase) => (
@@ -287,7 +285,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
         </section>
       ) : (tid === 'ama' || tid === 'fv') ? (
         <section className="mt-4">
-          <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700 rounded-2xl px-6 py-5 max-w-lg">
+          <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl px-6 py-5 max-w-lg">
             <div>
               <p className="font-semibold text-white">Sorteggio non ancora effettuato</p>
               <p className="text-slate-400 text-sm mt-1">

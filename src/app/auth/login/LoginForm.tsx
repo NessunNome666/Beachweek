@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Mail, Loader2, CheckCircle } from 'lucide-react'
+import { Mail, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function LoginForm({ next }: { next?: string }) {
   const [email, setEmail] = useState('')
@@ -60,7 +60,7 @@ export default function LoginForm({ next }: { next?: string }) {
           onChange={(e) => setDisplayName(e.target.value)}
           required
           placeholder="Nome Utente"
-          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
+          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
         />
       </div>
       <div>
@@ -74,10 +74,14 @@ export default function LoginForm({ next }: { next?: string }) {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="La tua email"
-          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
+          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 transition-colors"
         />
       </div>
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+      {error && (
+        <p className="flex items-center gap-1.5 text-red-400 text-xs">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
       <button
         type="submit"
         disabled={loading}

@@ -33,9 +33,9 @@ export default async function AdminPartitePage() {
 
   if (!matches.length) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-5">
-        <h1 className="text-2xl font-bold text-white mb-4">Inserisci risultati</h1>
-        <p className="text-slate-400">Nessuna partita trovata nel database. Esegui prima il seed dei dati.</p>
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <h1 className="text-3xl font-bold text-white mb-6">Inserisci risultati</h1>
+        <p className="text-center py-16 text-slate-500">Nessuna partita trovata nel database. Esegui prima il seed dei dati.</p>
       </div>
     )
   }
@@ -59,8 +59,8 @@ export default async function AdminPartitePage() {
   const todayKey = toGameDate(new Date().toISOString())
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-5">
-      <h1 className="text-2xl font-bold text-white mb-6">Inserisci risultati</h1>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6">Inserisci risultati</h1>
 
       <div className="space-y-6">
         {days.map(([dateKey, dayMatches]) => {

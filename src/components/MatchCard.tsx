@@ -51,14 +51,14 @@ export default function MatchCard({
   const dateStr = scheduledDate.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', timeZone: 'Europe/Rome' })
 
   return (
-    <div className="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3">
+    <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3">
       <div className="flex items-center justify-between mb-3 text-xs text-slate-500">
         <span>{PHASE_LABEL[match.phase] ?? match.phase} — Round {match.round}</span>
         <div className="flex items-center gap-1.5">
           {isPostponed ? (
             <>
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-red-400 font-medium">Rinviata</span>
+              <span className="w-2 h-2 rounded-full bg-orange-400" />
+              <span className="text-orange-400 font-medium">Rinviata</span>
             </>
           ) : isLive ? (
             <>
@@ -83,7 +83,7 @@ export default function MatchCard({
         <span className={`font-semibold text-sm leading-snug break-words min-w-0 ${homeWon ? 'text-white' : 'text-slate-300'}`}>
           {homeTeam?.name ?? 'Da definire'}
         </span>
-        <span className="font-mono font-bold text-lg px-4 py-1.5 rounded-lg min-w-[5rem] text-center bg-slate-700/80">
+        <span className="font-mono font-bold text-lg px-4 py-1.5 rounded-lg min-w-[5rem] text-center bg-slate-800">
           {isPostponed ? '—' : formatScore(match.score_home, match.score_away)}
         </span>
         <span className={`font-semibold text-sm leading-snug break-words min-w-0 text-right ${awayWon ? 'text-white' : 'text-slate-300'}`}>

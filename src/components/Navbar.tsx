@@ -22,10 +22,6 @@ export default function Navbar() {
     `text-base py-4 border-t border-slate-700/60 transition-colors ${
       isActive(href) ? 'text-orange-400 font-semibold' : 'text-white hover:text-orange-400'
     }`
-  const adminLinkClass = (href: string) =>
-    `text-base py-4 border-t border-slate-700/60 transition-colors ${
-      isActive(href) ? 'text-orange-300 font-semibold' : 'text-orange-400 hover:text-orange-300'
-    }`
 
   useEffect(() => {
     const supabase = createClient()
@@ -101,7 +97,7 @@ export default function Navbar() {
 
       {/* Overlay panel */}
       {open && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d2b]/97 backdrop-blur-sm">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-[#0d0520]/97 backdrop-blur-sm">
           {/* Header row */}
           <div className="px-5 h-16 flex items-center justify-between">
             <Link href="/" onClick={() => setOpen(false)}>
@@ -175,31 +171,34 @@ export default function Navbar() {
 
             {isAdmin && (
               <>
+                <p className="pt-4 -mb-1 border-t border-slate-700/60 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                  Admin
+                </p>
                 <Link
                   href="/admin/calendario"
                   onClick={() => setOpen(false)}
-                  className={adminLinkClass('/admin/calendario')}
+                  className={navLinkClass('/admin/calendario')}
                 >
                   Modifica calendario
                 </Link>
                 <Link
                   href="/admin/partite"
                   onClick={() => setOpen(false)}
-                  className={adminLinkClass('/admin/partite')}
+                  className={navLinkClass('/admin/partite')}
                 >
                   Inserisci risultati
                 </Link>
                 <Link
                   href="/admin/sorteggio"
                   onClick={() => setOpen(false)}
-                  className={adminLinkClass('/admin/sorteggio')}
+                  className={navLinkClass('/admin/sorteggio')}
                 >
                   Sorteggi
                 </Link>
                 <Link
                   href="/admin/mvp"
                   onClick={() => setOpen(false)}
-                  className={adminLinkClass('/admin/mvp')}
+                  className={navLinkClass('/admin/mvp')}
                 >
                   Votazione MVP
                 </Link>
@@ -215,7 +214,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                     className="flex items-center gap-1.5 text-white text-base hover:text-orange-400 transition-colors"
                   >
-                    <LogOut size={16} />
+                    <LogOut size={18} />
                     Esci
                   </button>
                 </>
@@ -225,7 +224,7 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2 text-white text-base hover:text-orange-400 transition-colors"
                 >
-                  <LogIn size={20} />
+                  <LogIn size={18} />
                   Accedi
                 </Link>
               )}

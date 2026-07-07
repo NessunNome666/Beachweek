@@ -61,7 +61,7 @@ export default function WinnerPredictionForm({ tournamentId, placement, teams, i
       <select
         value={selectedTeamId}
         onChange={(e) => { setSelectedTeamId(e.target.value); setSaved(false); setError('') }}
-        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-400 transition-colors"
+        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 transition-colors"
       >
         <option value="">{PLACEMENT_PLACEHOLDER[placement]}</option>
         {teams.map((team) => (
@@ -81,13 +81,13 @@ export default function WinnerPredictionForm({ tournamentId, placement, teams, i
         className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
           saved
             ? 'bg-green-500/20 text-green-400'
-            : 'bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white'
+            : 'bg-orange-400 text-slate-900 hover:bg-orange-300 disabled:opacity-40'
         }`}
       >
         {loading ? (
           <><Loader2 size={14} className="animate-spin" /> Salvataggio…</>
         ) : saved ? (
-          <><Check size={14} /> Salvato — 5 pt in palio</>
+          <><Check size={14} /> Salvato</>
         ) : (
           'Conferma'
         )}

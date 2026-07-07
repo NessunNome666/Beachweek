@@ -71,7 +71,7 @@ export default async function SorteggioPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-white mb-8">Sorteggi</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Sorteggi</h1>
 
       <div className="space-y-10">
         {tournaments.map((t) => {
@@ -92,7 +92,7 @@ export default async function SorteggioPage() {
 
           return (
             <section key={t.id}>
-              <h2 className="text-lg font-bold text-orange-400 mb-1">{t.name}</h2>
+              <h2 className="text-lg font-bold text-white mb-1">{t.name}</h2>
               <p className="text-xs text-slate-500 mb-4">{PHASE_LABEL[firstPhase]}</p>
               <div className="space-y-3">
                 {tournamentMatches.map((m, i) => {

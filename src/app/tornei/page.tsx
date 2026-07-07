@@ -15,15 +15,15 @@ export default async function TorneiPage() {
   const tournaments = (data ?? []) as { id: string; name: string; slug: string }[]
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-5">
-      <h1 className="text-3xl font-bold text-white mb-4">I Tornei</h1>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6">I Tornei</h1>
 
       <div className="flex flex-col gap-4">
         {tournaments.map((t) => (
           <Link
             key={t.id}
             href={`/tornei/${t.slug}`}
-            className="group block bg-slate-800/60 border border-slate-700 rounded-2xl p-6 hover:border-orange-500/50 transition-colors"
+            className="group block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-orange-400/60 transition-colors"
           >
             <h2 className="text-lg font-bold text-orange-400 mb-2 group-hover:text-orange-300 transition-colors">
               {t.name}

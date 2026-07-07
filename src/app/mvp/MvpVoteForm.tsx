@@ -74,12 +74,12 @@ export default function MvpVoteForm({ tournamentId, candidates }: Props) {
         <button
           onClick={() => setConfirming(true)}
           disabled={!selected}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white disabled:opacity-40 transition-opacity hover:opacity-90"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white disabled:opacity-40 transition-opacity hover:opacity-90"
         >
           <Trophy size={16} /> Vota
         </button>
       ) : (
-        <div className="space-y-2 bg-slate-900 border border-slate-700 rounded-xl p-4">
+        <div className="space-y-2 bg-slate-900 border border-slate-800 rounded-xl p-4">
           <p className="text-sm text-slate-300">
             Confermi il tuo voto? <span className="text-white font-semibold">Non potrai modificarlo.</span>
           </p>
@@ -87,14 +87,14 @@ export default function MvpVoteForm({ tournamentId, candidates }: Props) {
             <button
               onClick={() => setConfirming(false)}
               disabled={loading}
-              className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+              className="flex-1 py-2.5 rounded-full text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
             >
               Annulla
             </button>
             <button
               onClick={handleVote}
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white disabled:opacity-40 transition-opacity hover:opacity-90"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white disabled:opacity-40 transition-opacity hover:opacity-90"
             >
               {loading
                 ? <><Loader2 size={14} className="animate-spin" /> Invio…</>

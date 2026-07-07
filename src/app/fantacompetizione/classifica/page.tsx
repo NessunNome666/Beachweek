@@ -20,15 +20,15 @@ export default async function FantaClassificaPage() {
   const sorted = (data ?? []) as LeaderboardRow[]
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-5">
-      <h1 className="text-3xl font-bold text-white mb-4">Classifica Fanta</h1>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6">Classifica Fanta</h1>
 
       <div className="flex flex-col gap-3">
         {sorted.map((row, i) => (
           <div
             key={row.user_id}
-            className={`flex items-center gap-4 bg-slate-800/60 border rounded-xl px-5 py-4 ${
-              i === 0 ? 'border-yellow-500/60' : 'border-slate-700'
+            className={`flex items-center gap-4 border rounded-xl px-5 py-4 ${
+              i === 0 ? 'bg-orange-500/5 border-orange-400' : 'bg-slate-900 border-slate-800'
             }`}
           >
             <span className="text-xl font-bold text-white w-6 text-center">{i + 1}</span>
@@ -43,7 +43,7 @@ export default async function FantaClassificaPage() {
       </div>
 
       {sorted.length === 0 && (
-        <div className="text-center py-20 text-slate-500">
+        <div className="text-center py-16 text-slate-500">
           <p>Nessun punteggio ancora. Sii il primo a partecipare!</p>
         </div>
       )}

@@ -55,7 +55,7 @@ export default async function PartitePage() {
 
   if (groups.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8 text-center text-slate-500">
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-slate-500">
         <p>Nessuna partita in calendario al momento.</p>
       </div>
     )
@@ -63,7 +63,7 @@ export default async function PartitePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-white mb-4">Calendario partite</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Calendario partite</h1>
 
       <div className="space-y-6">
         {groups.map(({ dateKey, matches: dayMatches }) => {

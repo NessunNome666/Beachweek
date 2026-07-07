@@ -100,14 +100,14 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
               {PHASE_LABEL[match.phase] ?? match.phase} R{match.round}
             </span>
             {isPostponed && (
-              <span className="text-xs font-bold text-orange-400">RINVIATA</span>
+              <span className="text-xs font-bold uppercase tracking-wide text-orange-400">Rinviata</span>
             )}
           </div>
           <span className="font-medium text-sm truncate">{homeTeamName}</span>
           <span className="font-medium text-sm text-slate-400 truncate">vs {awayTeamName}</span>
         </div>
         <div className="flex flex-col items-end gap-0.5 shrink-0 ml-3">
-          <span className="text-xs text-slate-600">
+          <span className="text-xs text-slate-500">
             {new Date(match.scheduled_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
             {' '}
             {new Date(match.scheduled_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
@@ -125,7 +125,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => { setScheduledAt(e.target.value); setSaved(false) }}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-400"
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-orange-400"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
                     status === s
                       ? s === 'postponed'
                         ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40'
-                        : 'bg-amber-400 text-slate-900'
+                        : 'bg-orange-400 text-slate-900'
                       : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                   }`}
                 >
@@ -159,7 +159,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
               value={notes}
               onChange={(e) => { setNotes(e.target.value); setSaved(false) }}
               placeholder="Es. Rinviata per pioggia, nuovo orario TBD"
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-400"
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-orange-400"
             />
           </div>
 
@@ -175,7 +175,7 @@ export default function AdminCalendarioForm({ match, homeTeamName, awayTeamName 
             className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
               saved
                 ? 'bg-green-500/20 text-green-400 cursor-default'
-                : 'bg-amber-400 text-slate-900 hover:bg-amber-300 disabled:opacity-40'
+                : 'bg-orange-400 text-slate-900 hover:bg-orange-300 disabled:opacity-40'
             }`}
           >
             {loading ? (

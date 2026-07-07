@@ -72,7 +72,7 @@ export default function BracketSlotForm({
         <select
           value={homeId}
           onChange={(e) => { setHomeId(e.target.value); setError('') }}
-          className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white w-full"
+          className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white w-full focus:outline-none focus:border-orange-400 transition-colors"
         >
           <option value="">— Casa —</option>
           {teams.map((t) => (
@@ -81,11 +81,11 @@ export default function BracketSlotForm({
             </option>
           ))}
         </select>
-        <span className="text-slate-600 text-xs px-1">vs</span>
+        <span className="text-slate-500 text-xs px-1">vs</span>
         <select
           value={awayId}
           onChange={(e) => { setAwayId(e.target.value); setError('') }}
-          className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white w-full"
+          className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white w-full focus:outline-none focus:border-orange-400 transition-colors"
         >
           <option value="">— Ospite —</option>
           {teams.map((t) => (
@@ -103,7 +103,7 @@ export default function BracketSlotForm({
       <button
         onClick={handleSave}
         disabled={!homeId || !awayId || loading}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-amber-400 text-slate-900 hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-orange-400 text-slate-900 hover:bg-orange-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? <><Loader2 size={14} className="animate-spin" /> Salvataggio…</> : <><Check size={14} /> Conferma accoppiamento</>}
       </button>

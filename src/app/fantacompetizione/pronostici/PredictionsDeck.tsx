@@ -196,7 +196,7 @@ export default function PredictionsDeck({ matches }: Props) {
             <div className="flex-1 flex justify-center items-center">
               {!single && showDots &&
                 matches.map((m, i) => {
-                  const fill = m.locked ? 'bg-slate-800' : selections[m.id] ? 'bg-amber-400' : 'bg-slate-600'
+                  const fill = m.locked ? 'bg-slate-800' : selections[m.id] ? 'bg-orange-400' : 'bg-slate-600'
                   const ring = i === currentIndex ? ' ring-2 ring-white/50' : ''
                   return (
                     <button
@@ -229,7 +229,7 @@ export default function PredictionsDeck({ matches }: Props) {
                 onClick={() => setShowPlayers((v) => !v)}
                 aria-pressed={showPlayers}
                 aria-label="Mostra le rose"
-                className={`flex-none p-2 rounded-full ${showPlayers ? 'bg-slate-700 text-amber-400' : 'bg-slate-800 text-slate-300'}`}
+                className={`flex-none p-2 rounded-full ${showPlayers ? 'bg-slate-700 text-orange-400' : 'bg-slate-800 text-slate-300'}`}
               >
                 <Users size={18} />
               </button>
@@ -300,7 +300,7 @@ export default function PredictionsDeck({ matches }: Props) {
               {/* Pronostico corrente in uno slot fisso: nessun salto di layout */}
               <div
                 className={`h-9 flex items-center justify-center gap-2 font-mono font-bold ${
-                  match.locked ? 'text-xl text-slate-400' : selected ? 'text-2xl text-amber-400' : 'text-2xl text-slate-700'
+                  match.locked ? 'text-xl text-slate-400' : selected ? 'text-2xl text-orange-400' : 'text-2xl text-slate-700'
                 }`}
               >
                 {match.locked && <Lock size={12} className="text-slate-600" />}
