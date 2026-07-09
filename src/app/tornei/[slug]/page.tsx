@@ -21,7 +21,6 @@ const SLUG_TO_TID: Record<string, 'ama' | 'pro' | 'fv'> = {
   'beach-volley-amatoriale': 'ama',
   'beach-volley-pro': 'pro',
   'foot-volley-2v2': 'fv',
-  'test-cup-2026': 'ama',
 }
 
 export default async function TorneoPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -34,7 +33,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   // Step 1: ottieni il torneo per slug
   const { data: torneo } = await supabase
     .from('tournaments')
-    .select('*')
+    .select('id, name, slug')
     .eq('slug', slug)
     .single()
 
@@ -48,7 +47,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
   ] = await Promise.all([
     supabase
       .from('teams')
-      .select('*')
+      .select('id, name, tournament_id, group_name, created_at, players')
       .eq('tournament_id', torneo.id)
       // Ordine di inserimento = ordine ufficiale dei gironi sulla locandina
       // (i nomi reali non sono alfabetici: BRASILE '10 finirebbe prima di BRASILE '90)
@@ -56,7 +55,8 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
       .order('name'),
     supabase
       .from('matches')
-      .select('*')
+      // niente court (mai mostrato); notes SÌ (MatchCard la rende, es. motivo rinvio)
+      .select('id, tournament_id, phase, round, team_home_id, team_away_id, score_home, score_away, score_detail, scheduled_at, status, notes')
       .eq('tournament_id', torneo.id)
       .order('phase')
       .order('round'),
@@ -81,7 +81,7 @@ export default async function TorneoPage({ params }: { params: Promise<{ slug: s
     id: string; tournament_id: string; phase: string; round: number
     team_home_id: string | null; team_away_id: string | null
     score_home: number | null; score_away: number | null; score_detail: string | null
-    scheduled_at: string; status: string; court: string | null
+    scheduled_at: string; status: string; notes: string | null
   }> = matchesRaw ?? []
 
   // Mappa a StandingRow — il DB traccia solo set, non punti individuali

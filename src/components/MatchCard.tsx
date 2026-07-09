@@ -16,7 +16,7 @@ interface Match {
   score_detail?: string | null
   scheduled_at: string
   status: string
-  court: string | null
+  court?: string | null   // mai mostrato in UI: opzionale, le pagine possono non selezionarlo
   notes?: string | null
 }
 
