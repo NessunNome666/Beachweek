@@ -25,6 +25,15 @@ const PHASE_LABEL: Record<string, string> = {
   finale: 'Finale', terzo_posto: '3° Posto',
 }
 
+// Etichetta corta del torneo per la card del deck: nel deck convivono partite di tornei
+// diversi (stessa serata, unico campo), quindi serve dire a quale torneo si riferisce.
+// Chiave = slug (stabile nel DB); fallback al nome esteso se lo slug non è mappato.
+const TOURNAMENT_SHORT: Record<string, string> = {
+  'beach-volley-amatoriale': 'Amatoriale',
+  'beach-volley-pro': 'Pro',
+  'foot-volley-2v2': 'Foot Volley',
+}
+
 export default async function PronosticiPage() {
   const supabase = await createClient()
   const sb = supabase
@@ -37,9 +46,7 @@ export default async function PronosticiPage() {
     .select('id, tournament_id, phase, round, team_home_id, team_away_id, status, score_home, score_away, scheduled_at')
     .order('scheduled_at')
 
-  // select('*') e non le colonne esplicite: la pagina funziona anche se la
-  // migration 010 (colonna players) non è ancora applicata al DB
-  const { data: teamsRaw } = await sb.from('teams').select('*')
+  const { data: teamsRaw } = await sb.from('teams').select('id, name, tournament_id, players')
   const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug, predictions_locked').order('created_at')
 
   const matches = (matchesRaw ?? []) as Match[]
@@ -47,6 +54,9 @@ export default async function PronosticiPage() {
   const tournaments = (tournamentsRaw ?? []) as Tournament[]
   const teamsMap = Object.fromEntries(teams.map((t) => [t.id, t.name]))
   const playersMap = Object.fromEntries(teams.map((t) => [t.id, t.players ?? []]))
+  const tournamentLabelMap = Object.fromEntries(
+    tournaments.map((t) => [t.id, TOURNAMENT_SHORT[t.slug] ?? t.name])
+  )
 
   let existingPredictions: PredictionMatch[] = []
   let existingWinnerPredictions: PredictionWinner[] = []
@@ -97,6 +107,7 @@ export default async function PronosticiPage() {
     locked: new Date(m.scheduled_at).getTime() <= now || m.status === 'in_progress',
     postponed: m.status === 'postponed',
     initialPrediction: predMap[m.id],
+    tournamentLabel: tournamentLabelMap[m.tournament_id],
     phaseLabel: m.phase !== 'girone' ? (PHASE_LABEL[m.phase] ?? m.phase) : undefined,
     // Formattato lato server: niente deriva di fuso/idratazione sul client
     timeLabel: new Date(m.scheduled_at).toLocaleTimeString('it-IT', {

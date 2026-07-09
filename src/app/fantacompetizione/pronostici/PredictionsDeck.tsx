@@ -14,6 +14,7 @@ interface MatchItem {
   locked: boolean          // congelata: partita iniziata o in corso
   postponed: boolean
   initialPrediction?: string
+  tournamentLabel?: string // torneo di riferimento (il deck mescola i tornei della serata)
   phaseLabel?: string
   timeLabel?: string       // orario d'inizio già formattato lato server (es. "18:30")
   homePlayers?: string[]
@@ -249,7 +250,12 @@ export default function PredictionsDeck({ matches }: Props) {
               }`}
             >
               {/* Riga meta ad altezza fissa: le card restano allineate tra loro */}
-              <div className="h-4 flex items-center justify-center gap-2.5 text-[10px]">
+              <div className="h-4 flex items-center justify-center gap-2 text-[10px]">
+                {match.tournamentLabel && (
+                  <span className="font-semibold leading-none px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+                    {match.tournamentLabel}
+                  </span>
+                )}
                 {match.phaseLabel && (
                   <span className="font-bold uppercase tracking-wide text-orange-400/80">{match.phaseLabel}</span>
                 )}
