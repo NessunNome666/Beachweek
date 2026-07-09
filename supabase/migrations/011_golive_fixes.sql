@@ -48,8 +48,10 @@ DROP POLICY IF EXISTS users_readable_by_authenticated              ON public.use
 --    coi permessi del proprietario della tabella, non del chiamante.
 --    get_mvp_results NON va revocata: la chiama legittimamente il client.
 -- ────────────────────────────────────────────────────────────────────
-REVOKE EXECUTE ON FUNCTION public.award_podium_points(uuid) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.complete_tournament_when_podium_decided() FROM anon, authenticated;
+--    NB: serve revocare da PUBLIC — anon/authenticated ereditano l'EXECUTE
+--    dal grant implicito a PUBLIC, revocarlo solo da loro non ha effetto.
+REVOKE EXECUTE ON FUNCTION public.award_podium_points(uuid) FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.complete_tournament_when_podium_decided() FROM PUBLIC, anon, authenticated;
 
 -- ────────────────────────────────────────────────────────────────────
 -- 4. Indici di copertura sulle foreign key (avvisi del linter)
