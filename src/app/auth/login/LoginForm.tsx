@@ -40,12 +40,13 @@ export default function LoginForm({ next }: { next?: string }) {
     }
   }
 
-  // Accesso col codice a 6 cifre: verifyOtp(email+token) non dipende dal browser
+  // Accesso col codice OTP: verifyOtp(email+token) non dipende dal browser
   // che ha richiesto il link — funziona in WebView, browser diversi e PWA installata.
+  // Lunghezza variabile (6-10): dipende da "Email OTP Length" del progetto Supabase (qui 8).
   async function handleVerifyCode(e: React.FormEvent) {
     e.preventDefault()
     const cleaned = code.replace(/\D/g, '')
-    if (cleaned.length !== 6) return
+    if (cleaned.length < 6) return
     setVerifying(true)
     setError('')
     const supabase = createClient()
@@ -69,18 +70,18 @@ export default function LoginForm({ next }: { next?: string }) {
         <CheckCircle size={48} className="text-green-400 mx-auto mb-4" />
         <p className="font-semibold text-lg mb-2">Email inviata!</p>
         <p className="text-slate-400 text-sm mb-6">
-          Clicca il link nell&apos;email oppure inserisci qui il codice a 6 cifre.
+          Clicca il link nell&apos;email oppure inserisci qui il codice.
         </p>
         <form onSubmit={handleVerifyCode} className="space-y-3">
           <input
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
-            maxLength={6}
+            maxLength={10}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            placeholder="000000"
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-center text-2xl font-mono tracking-[0.5em] placeholder-slate-600 focus:outline-none focus:border-orange-400 transition-colors"
+            placeholder="········"
+            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-center text-xl font-mono tracking-[0.3em] placeholder-slate-600 focus:outline-none focus:border-orange-400 transition-colors"
           />
           {error && (
             <p className="flex items-center justify-center gap-1.5 text-red-400 text-xs">
@@ -89,7 +90,7 @@ export default function LoginForm({ next }: { next?: string }) {
           )}
           <button
             type="submit"
-            disabled={verifying || code.length !== 6}
+            disabled={verifying || code.length < 6}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-4 rounded-full hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {verifying ? <Loader2 size={18} className="animate-spin" /> : <KeyRound size={18} />}
