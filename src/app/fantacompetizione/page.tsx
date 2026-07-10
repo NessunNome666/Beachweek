@@ -21,7 +21,7 @@ export default async function FantaLandingPage() {
     },
     {
       title: 'Accumula punti',
-      desc: 'Guadagni punti per ogni pronostico corretto. Il primo in classifica vince il premio!',
+      desc: 'Guadagni punti per ogni pronostico corretto. Scala la classifica per vincere il premio!*',
       href: '/fantacompetizione/classifica',
     },
   ]
@@ -78,6 +78,14 @@ export default async function FantaLandingPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">Il premio*</h2>
+        <p className="text-slate-300 text-sm">
+          Giocare è gratuito e aperto a tutti. Solo per aggiudicarsi il premio finale serve la
+          quota di 3 €, da versare a un dirigente dell&apos;organizzazione durante l&apos;evento.
+        </p>
       </section>
     </div>
   )

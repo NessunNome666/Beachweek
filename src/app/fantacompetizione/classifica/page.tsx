@@ -23,7 +23,11 @@ export default async function FantaClassificaPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-white mb-6">Classifica Fanta</h1>
+      <h1 className="text-3xl font-bold text-white mb-2">Classifica Fanta</h1>
+      <p className="text-slate-400 text-sm mb-6">
+        Giocare è gratuito e aperto a tutti. Solo per aggiudicarsi il premio finale serve la
+        quota di 3 €, da versare a un dirigente dell&apos;organizzazione durante l&apos;evento.
+      </p>
 
       <div className="flex flex-col gap-3">
         {sorted.map((row, i) => (
