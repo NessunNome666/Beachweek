@@ -84,7 +84,7 @@ export default async function FantaLandingPage() {
         <h2 className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">Il premio*</h2>
         <p className="text-slate-300 text-sm">
           Giocare è gratuito e aperto a tutti. Solo per aggiudicarsi il premio finale serve la
-          quota di 3 €, da versare a un dirigente dell&apos;organizzazione durante l&apos;evento.
+          quota di 3 €, da versare a un dirigente dell&apos;organizzazione entro il 12 luglio.
         </p>
       </section>
     </div>
