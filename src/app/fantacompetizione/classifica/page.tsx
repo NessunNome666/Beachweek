@@ -1,4 +1,5 @@
 ﻿import { createClient } from '@/lib/supabase/server'
+import ScrollToMe from './ScrollToMe'
 
 export const revalidate = 0
 
@@ -16,6 +17,7 @@ const MEDALS = ['🥇', '🥈', '🥉']
 
 export default async function FantaClassificaPage() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   const { data } = await supabase.from('fanta_leaderboard').select('*')
   const sorted = (data ?? []) as LeaderboardRow[]
 
@@ -27,6 +29,7 @@ export default async function FantaClassificaPage() {
         {sorted.map((row, i) => (
           <div
             key={row.user_id}
+            id={row.user_id === user?.id ? 'me' : undefined}
             className={`flex items-center gap-4 border rounded-xl px-5 py-4 ${
               i === 0 ? 'bg-orange-500/5 border-orange-400' : 'bg-slate-900 border-slate-800'
             }`}
@@ -47,6 +50,8 @@ export default async function FantaClassificaPage() {
           <p>Nessun punteggio ancora. Sii il primo a partecipare!</p>
         </div>
       )}
+
+      <ScrollToMe />
     </div>
   )
 }
