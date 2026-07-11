@@ -69,8 +69,11 @@ export default function LoginForm({ next }: { next?: string }) {
       <div className="text-center py-6">
         <CheckCircle size={48} className="text-green-400 mx-auto mb-4" />
         <p className="font-semibold text-lg mb-2">Email inviata!</p>
-        <p className="text-slate-400 text-sm mb-6">
+        <p className="text-slate-400 text-sm mb-2">
           Clicca il link nell&apos;email oppure inserisci qui il codice.
+        </p>
+        <p className="text-slate-500 text-xs mb-6">
+          Non la trovi? Controlla Spam o Promozioni. Vale l&apos;ultima email ricevuta.
         </p>
         <form onSubmit={handleVerifyCode} className="space-y-3">
           <input
