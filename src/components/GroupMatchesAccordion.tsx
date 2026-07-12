@@ -5,11 +5,12 @@ import { ChevronDown } from 'lucide-react'
 
 interface Props {
   label?: string
+  defaultOpen?: boolean
   children: React.ReactNode
 }
 
-export default function GroupMatchesAccordion({ label = 'Partite', children }: Props) {
-  const [open, setOpen] = useState(false)
+export default function GroupMatchesAccordion({ label = 'Partite', defaultOpen = false, children }: Props) {
+  const [open, setOpen] = useState(defaultOpen)
 
   return (
     <div className="mt-3">

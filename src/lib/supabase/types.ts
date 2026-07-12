@@ -407,6 +407,17 @@ export type Database = {
         }
         Relationships: []
       }
+      fanta_leaderboard_daily: {
+        Row: {
+          correct_exact: number | null
+          correct_winner: number | null
+          day_points: number | null
+          display_name: string | null
+          game_date: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       standings_view: {
         Row: {
           group_name: string | null

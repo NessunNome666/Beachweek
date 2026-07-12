@@ -5,6 +5,7 @@ import PredictionForm from './PredictionForm'
 import PredictionsDeck from './PredictionsDeck'
 import WinnerPredictionForm from './WinnerPredictionForm'
 import ResultsCollapse from './ResultsCollapse'
+import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 import NotificationOptIn from '@/components/NotificationOptIn'
 import { PlayersToggle } from './PlayersVisibility'
 
@@ -80,6 +81,17 @@ export default async function PronosticiPage() {
 
   const completedMatches = matches.filter((m) => m.status === 'completed' && hasTeams(m))
 
+  // Risultati raggruppati per giornata (ordine cronologico garantito dalla query):
+  // nel collapse solo l'ultima giornata parte aperta, le altre restano chiuse.
+  const completedByDay = new Map<string, Match[]>()
+  for (const m of completedMatches) {
+    const k = toGameDate(m.scheduled_at)
+    if (!completedByDay.has(k)) completedByDay.set(k, [])
+    completedByDay.get(k)!.push(m)
+  }
+  const completedDays = Array.from(completedByDay, ([dateKey, dayMatches]) => ({ dateKey, dayMatches }))
+  const lastCompletedDay = completedDays.length > 0 ? completedDays[completedDays.length - 1].dateKey : null
+
   // Giornata attiva = la prima giornata con almeno una partita pronosticabile non ancora conclusa.
   // Resta visibile (anche con partite in corso) finché TUTTE le sue partite non sono completate.
   const liveMatches = matches.filter((m) => hasTeams(m) && m.status !== 'completed')
@@ -130,6 +142,31 @@ export default async function PronosticiPage() {
     <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-white mb-6">I miei pronostici</h1>
 
+      {completedMatches.length > 0 && (
+        <ResultsCollapse count={completedMatches.length}>
+          {completedDays.map(({ dateKey, dayMatches }) => (
+            <GroupMatchesAccordion
+              key={dateKey}
+              label={`Giorno ${dayNumber(dateKey, firstGameDate!)} (${dayMatches.length})`}
+              defaultOpen={dateKey === lastCompletedDay}
+            >
+              {dayMatches.map((match) => (
+                <PredictionForm
+                  key={match.id}
+                  matchId={match.id}
+                  homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
+                  awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
+                  initialPrediction={predMap[match.id]}
+                  matchStatus={match.status}
+                  actualHome={match.score_home}
+                  actualAway={match.score_away}
+                />
+              ))}
+            </GroupMatchesAccordion>
+          ))}
+        </ResultsCollapse>
+      )}
+
       <div className="flex items-start gap-2 mb-6">
         <NotificationOptIn variant="compact" />
         {deckHasPlayers && (
@@ -138,23 +175,6 @@ export default async function PronosticiPage() {
           </div>
         )}
       </div>
-
-      {completedMatches.length > 0 && (
-        <ResultsCollapse count={completedMatches.length}>
-          {completedMatches.map((match) => (
-            <PredictionForm
-              key={match.id}
-              matchId={match.id}
-              homeTeamName={match.team_home_id ? (teamsMap[match.team_home_id] ?? 'Da definire') : 'Da definire'}
-              awayTeamName={match.team_away_id ? (teamsMap[match.team_away_id] ?? 'Da definire') : 'Da definire'}
-              initialPrediction={predMap[match.id]}
-              matchStatus={match.status}
-              actualHome={match.score_home}
-              actualAway={match.score_away}
-            />
-          ))}
-        </ResultsCollapse>
-      )}
 
       {batchMatches.length > 0 ? (
         <section className="mb-12">
