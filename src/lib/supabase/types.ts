@@ -298,6 +298,92 @@ export type Database = {
           },
         ]
       }
+      spotted_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spotted_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "spotted_feed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spotted_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "spotted_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spotted_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "fanta_leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "spotted_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spotted_posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spotted_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "fanta_leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "spotted_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           created_at: string
@@ -418,6 +504,15 @@ export type Database = {
         }
         Relationships: []
       }
+      spotted_feed: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          likes: number | null
+        }
+        Relationships: []
+      }
       standings_view: {
         Row: {
           group_name: string | null
@@ -453,6 +548,14 @@ export type Database = {
           pct: number
           votes: number
         }[]
+      }
+      spotted_emergency_cleanup: {
+        Args: { delete_count?: number }
+        Returns: number
+      }
+      spotted_recent_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
     }
     Enums: {

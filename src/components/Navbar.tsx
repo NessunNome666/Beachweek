@@ -168,6 +168,13 @@ export default function Navbar() {
                 Regolamento Fanta
               </Link>
             )}
+            <Link
+              href="/spotted"
+              onClick={() => setOpen(false)}
+              className={navLinkClass('/spotted')}
+            >
+              Spotted Beach
+            </Link>
 
             {isAdmin && (
               <>
@@ -201,6 +208,13 @@ export default function Navbar() {
                   className={navLinkClass('/admin/mvp')}
                 >
                   Votazione MVP
+                </Link>
+                <Link
+                  href="/admin/spotted"
+                  onClick={() => setOpen(false)}
+                  className={navLinkClass('/admin/spotted')}
+                >
+                  Moderazione Spotted
                 </Link>
               </>
             )}
