@@ -1,9 +1,10 @@
-import { Lock } from 'lucide-react'
+import { Lock, Trophy } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { toGameDate, dayNumber } from '@/lib/game-date'
 import PredictionForm from './PredictionForm'
 import PredictionsDeck from './PredictionsDeck'
 import WinnerPredictionForm from './WinnerPredictionForm'
+import WinnerPredictionResult from './WinnerPredictionResult'
 import ResultsCollapse from './ResultsCollapse'
 import GroupMatchesAccordion from '@/components/GroupMatchesAccordion'
 import NotificationOptIn from '@/components/NotificationOptIn'
@@ -17,9 +18,9 @@ interface Match {
   score_home: number | null; score_away: number | null; scheduled_at: string
 }
 interface Team { id: string; name: string; tournament_id: string; players: string[] | null }
-interface Tournament { id: string; name: string; slug: string; predictions_locked: boolean }
+interface Tournament { id: string; name: string; slug: string; predictions_locked: boolean; status: string }
 interface PredictionMatch { match_id: string; predicted_home: number; predicted_away: number }
-interface PredictionWinner { tournament_id: string; placement: number; predicted_team_id: string }
+interface PredictionWinner { tournament_id: string; placement: number; predicted_team_id: string; points_awarded: number | null }
 
 const PHASE_LABEL: Record<string, string> = {
   ottavi: 'Ottavi', quarti: 'Quarti', semifinale: 'Semifinale',
@@ -48,7 +49,7 @@ export default async function PronosticiPage() {
     .order('scheduled_at')
 
   const { data: teamsRaw } = await sb.from('teams').select('id, name, tournament_id, players')
-  const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug, predictions_locked').order('created_at')
+  const { data: tournamentsRaw } = await sb.from('tournaments').select('id, name, slug, predictions_locked, status').order('created_at')
 
   const matches = (matchesRaw ?? []) as Match[]
   const teams = (teamsRaw ?? []) as Team[]
@@ -64,7 +65,7 @@ export default async function PronosticiPage() {
 
   if (user) {
     const { data: predsRaw } = await sb.from('predictions_match').select('match_id, predicted_home, predicted_away').eq('user_id', user.id)
-    const { data: winnerPredsRaw } = await sb.from('predictions_winner').select('tournament_id, placement, predicted_team_id').eq('user_id', user.id)
+    const { data: winnerPredsRaw } = await sb.from('predictions_winner').select('tournament_id, placement, predicted_team_id, points_awarded').eq('user_id', user.id)
     existingPredictions = (predsRaw ?? []) as PredictionMatch[]
     existingWinnerPredictions = (winnerPredsRaw ?? []) as PredictionWinner[]
   }
@@ -75,6 +76,31 @@ export default async function PronosticiPage() {
   const winnerPredMap = Object.fromEntries(
     existingWinnerPredictions.map((p) => [`${p.tournament_id}-${p.placement}`, p.predicted_team_id])
   )
+  const winnerPointsMap = Object.fromEntries(
+    existingWinnerPredictions.map((p) => [`${p.tournament_id}-${p.placement}`, p.points_awarded ?? 0])
+  )
+
+  // Podio reale per torneo concluso: 1°/2° dalla finale, 3° dalla finalina.
+  // Stessa logica di award_podium_points (migration 009), qui solo per la UI.
+  const podiumActualMap: Record<string, Partial<Record<1 | 2 | 3, string>>> = {}
+  for (const t of tournaments) {
+    const finale = matches.find((m) => m.tournament_id === t.id && m.phase === 'finale' && m.status === 'completed')
+    const terzo = matches.find((m) => m.tournament_id === t.id && m.phase === 'terzo_posto' && m.status === 'completed')
+    const entry: Partial<Record<1 | 2 | 3, string>> = {}
+    if (finale && finale.score_home != null && finale.score_away != null) {
+      const homeWon = finale.score_home > finale.score_away
+      if (finale.team_home_id && finale.team_away_id) {
+        entry[1] = homeWon ? finale.team_home_id : finale.team_away_id
+        entry[2] = homeWon ? finale.team_away_id : finale.team_home_id
+      }
+    }
+    if (terzo && terzo.score_home != null && terzo.score_away != null) {
+      const homeWon = terzo.score_home > terzo.score_away
+      const winnerId = homeWon ? terzo.team_home_id : terzo.team_away_id
+      if (winnerId) entry[3] = winnerId
+    }
+    podiumActualMap[t.id] = entry
+  }
 
   // Pronosticabile = entrambe le squadre assegnate (l'eliminazione lo diventa dopo il sorteggio)
   const hasTeams = (m: Match) => !!m.team_home_id && !!m.team_away_id
@@ -197,18 +223,40 @@ export default async function PronosticiPage() {
           {tournaments.map((t) => {
             const tournamentTeams = teams.filter((team) => team.tournament_id === t.id)
             const locked = isPodioLocked(t)
+            const finished = t.status === 'completed'
             return (
               <div key={t.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-semibold">{t.name}</h3>
-                  {locked && (
+                  {finished ? (
+                    <span className="flex items-center gap-1 text-xs text-orange-400 bg-orange-500/10 px-2 py-1 rounded-full">
+                      <Trophy size={10} />
+                      Concluso
+                    </span>
+                  ) : locked && (
                     <span className="flex items-center gap-1 text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded-full">
                       <Lock size={10} />
                       Bloccato
                     </span>
                   )}
                 </div>
-                {locked ? (
+                {finished ? (
+                  <div className="space-y-3">
+                    {([1, 2, 3] as const).map((placement) => {
+                      const predictedTeamId = winnerPredMap[`${t.id}-${placement}`]
+                      const actualTeamId = podiumActualMap[t.id]?.[placement]
+                      return (
+                        <WinnerPredictionResult
+                          key={placement}
+                          placement={placement}
+                          predictedTeamName={predictedTeamId ? teamsMap[predictedTeamId] : undefined}
+                          actualTeamName={actualTeamId ? teamsMap[actualTeamId] : undefined}
+                          points={winnerPointsMap[`${t.id}-${placement}`] ?? 0}
+                        />
+                      )
+                    })}
+                  </div>
+                ) : locked ? (
                   <p className="text-slate-500 text-sm">Gironi conclusi: i pronostici sul podio sono chiusi.</p>
                 ) : (
                   <div className="space-y-5">
